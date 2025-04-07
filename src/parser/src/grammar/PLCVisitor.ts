@@ -16,6 +16,7 @@ import { UnaryMinusContext } from "./PLCParser";
 import { ParensContext } from "./PLCParser";
 import { LiteralExprContext } from "./PLCParser";
 import { VarExprContext } from "./PLCParser";
+import { MultiAssignmentContext } from "./PLCParser";
 import { IntLiteralContext } from "./PLCParser";
 import { FloatLiteralContext } from "./PLCParser";
 import { BoolLiteralContext } from "./PLCParser";
@@ -144,6 +145,14 @@ export interface PLCVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitVarExpr?: (ctx: VarExprContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by the `multiAssignment`
+	 * labeled alternative in `PLCParser.expression`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitMultiAssignment?: (ctx: MultiAssignmentContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by the `intLiteral`

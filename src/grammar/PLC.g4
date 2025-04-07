@@ -5,14 +5,13 @@ program : statement* EOF;
 
 // pravidlo pro jednotlivé příkazy
 statement
-    : varDeclaration
+    : (varDeclaration
     | expressionStmt
     | readStmt
     | writeStmt
     | block
     | ifStmt
-    | whileStmt
-    ;
+    | whileStmt) ';'? ;
 
 // Deklarace proměnných musí být ukončena středníkem
 varDeclaration : TYPE ID (',' ID)* ';' ;
@@ -24,7 +23,7 @@ expressionStmt : expression ';' ;
 readStmt : 'read' ID (',' ID)* ';' ;
 
 // Zápis musí být ukončen středníkem
-writeStmt : 'write' expression (',' expression)* ';' ;
+writeStmt : 'write' (expression (',' expression)* )? ';' ;
 
 // Blok může obsahovat více příkazů
 block : '{' statement* '}' ;
@@ -45,11 +44,12 @@ expression
     | expression ('==' | '!=') expression        # eqNeq
     | expression '&&' expression                 # and
     | expression '||' expression                 # or
-    | '!' expression                            # not
-    | '-' expression                            # unaryMinus
-    | '(' expression ')'                        # parens
-    | literal                                   # literalExpr
+    | '!' expression                             # not
+    | '-' expression                             # unaryMinus
+    | '(' expression ')'                         # parens
+    | literal                                    # literalExpr
     | ID                                        # varExpr
+    | ID '=' expression (',' ID '=' expression)* # multiAssignment
     ;
 
 // Literály

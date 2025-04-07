@@ -41,7 +41,34 @@ antlr4ts -visitor -o src/parser src/grammar/PLC.g4
 4. **Run the typechecker**:
 
 ```bash
-npm run start
+npm start
+```
+5. **Run test file** 
+```bash
+npm exec ts-node src/index.ts src/tests/<testFile>
+```
+5. Or you can use test code inside index.ts
+```typescript
+console.log("⚠️ No file provided. Using example PLC program.");
+  code = `
+        // Sample PLC program
+        int x;
+        x = 0;
+        bool flag;
+        flag = true;
+        
+        if (flag) {
+          x = x + 1;
+        } else {
+          x = x - 1;
+        }
+        
+        while (x < 10 && flag) {
+          x = x + 1;
+        }
+        
+        write "Final value of x: ", x;
+    `;
 ```
 
 ## 📁 Project Structure

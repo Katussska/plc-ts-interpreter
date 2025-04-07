@@ -79,7 +79,7 @@ export class PLCParser extends Parser {
 	];
 
 	private static readonly _LITERAL_NAMES: Array<string | undefined> = [
-		undefined, "','", "';'", "'read'", "'write'", "'{'", "'}'", "'if'", "'('", 
+		undefined, "';'", "','", "'read'", "'write'", "'{'", "'}'", "'if'", "'('", 
 		"')'", "'else'", "'while'", "'='", "'.'", "'*'", "'/'", "'%'", "'+'", 
 		"'-'", "'<'", "'>'", "'=='", "'!='", "'&&'", "'||'", "'!'",
 	];
@@ -161,11 +161,12 @@ export class PLCParser extends Parser {
 		let _localctx: StatementContext = new StatementContext(this._ctx, this.state);
 		this.enterRule(_localctx, 2, PLCParser.RULE_statement);
 		try {
+			this.enterOuterAlt(_localctx, 1);
+			{
 			this.state = 37;
 			this._errHandler.sync(this);
 			switch (this._input.LA(1)) {
 			case PLCParser.TYPE:
-				this.enterOuterAlt(_localctx, 1);
 				{
 				this.state = 30;
 				this.varDeclaration();
@@ -179,42 +180,36 @@ export class PLCParser extends Parser {
 			case PLCParser.STRING:
 			case PLCParser.BOOL:
 			case PLCParser.ID:
-				this.enterOuterAlt(_localctx, 2);
 				{
 				this.state = 31;
 				this.expressionStmt();
 				}
 				break;
 			case PLCParser.T__2:
-				this.enterOuterAlt(_localctx, 3);
 				{
 				this.state = 32;
 				this.readStmt();
 				}
 				break;
 			case PLCParser.T__3:
-				this.enterOuterAlt(_localctx, 4);
 				{
 				this.state = 33;
 				this.writeStmt();
 				}
 				break;
 			case PLCParser.T__4:
-				this.enterOuterAlt(_localctx, 5);
 				{
 				this.state = 34;
 				this.block();
 				}
 				break;
 			case PLCParser.T__6:
-				this.enterOuterAlt(_localctx, 6);
 				{
 				this.state = 35;
 				this.ifStmt();
 				}
 				break;
 			case PLCParser.T__10:
-				this.enterOuterAlt(_localctx, 7);
 				{
 				this.state = 36;
 				this.whileStmt();
@@ -222,6 +217,17 @@ export class PLCParser extends Parser {
 				break;
 			default:
 				throw new NoViableAltException(this);
+			}
+			this.state = 40;
+			this._errHandler.sync(this);
+			switch ( this.interpreter.adaptivePredict(this._input, 2, this._ctx) ) {
+			case 1:
+				{
+				this.state = 39;
+				this.match(PLCParser.T__0);
+				}
+				break;
+			}
 			}
 		}
 		catch (re) {
@@ -246,28 +252,28 @@ export class PLCParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 39;
+			this.state = 42;
 			this.match(PLCParser.TYPE);
-			this.state = 40;
+			this.state = 43;
 			this.match(PLCParser.ID);
-			this.state = 45;
+			this.state = 48;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
-			while (_la === PLCParser.T__0) {
+			while (_la === PLCParser.T__1) {
 				{
 				{
-				this.state = 41;
-				this.match(PLCParser.T__0);
-				this.state = 42;
+				this.state = 44;
+				this.match(PLCParser.T__1);
+				this.state = 45;
 				this.match(PLCParser.ID);
 				}
 				}
-				this.state = 47;
+				this.state = 50;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
-			this.state = 48;
-			this.match(PLCParser.T__1);
+			this.state = 51;
+			this.match(PLCParser.T__0);
 			}
 		}
 		catch (re) {
@@ -291,10 +297,10 @@ export class PLCParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 50;
+			this.state = 53;
 			this.expression(0);
-			this.state = 51;
-			this.match(PLCParser.T__1);
+			this.state = 54;
+			this.match(PLCParser.T__0);
 			}
 		}
 		catch (re) {
@@ -319,28 +325,28 @@ export class PLCParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 53;
+			this.state = 56;
 			this.match(PLCParser.T__2);
-			this.state = 54;
+			this.state = 57;
 			this.match(PLCParser.ID);
-			this.state = 59;
+			this.state = 62;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
-			while (_la === PLCParser.T__0) {
+			while (_la === PLCParser.T__1) {
 				{
 				{
-				this.state = 55;
-				this.match(PLCParser.T__0);
-				this.state = 56;
+				this.state = 58;
+				this.match(PLCParser.T__1);
+				this.state = 59;
 				this.match(PLCParser.ID);
 				}
 				}
-				this.state = 61;
+				this.state = 64;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
-			this.state = 62;
-			this.match(PLCParser.T__1);
+			this.state = 65;
+			this.match(PLCParser.T__0);
 			}
 		}
 		catch (re) {
@@ -365,28 +371,36 @@ export class PLCParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 64;
+			this.state = 67;
 			this.match(PLCParser.T__3);
-			this.state = 65;
-			this.expression(0);
-			this.state = 70;
+			this.state = 76;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
-			while (_la === PLCParser.T__0) {
+			if ((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << PLCParser.T__7) | (1 << PLCParser.T__17) | (1 << PLCParser.T__24) | (1 << PLCParser.INT) | (1 << PLCParser.FLOAT) | (1 << PLCParser.STRING) | (1 << PLCParser.BOOL) | (1 << PLCParser.ID))) !== 0)) {
 				{
-				{
-				this.state = 66;
-				this.match(PLCParser.T__0);
-				this.state = 67;
+				this.state = 68;
 				this.expression(0);
-				}
-				}
-				this.state = 72;
+				this.state = 73;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
+				while (_la === PLCParser.T__1) {
+					{
+					{
+					this.state = 69;
+					this.match(PLCParser.T__1);
+					this.state = 70;
+					this.expression(0);
+					}
+					}
+					this.state = 75;
+					this._errHandler.sync(this);
+					_la = this._input.LA(1);
+				}
+				}
 			}
-			this.state = 73;
-			this.match(PLCParser.T__1);
+
+			this.state = 78;
+			this.match(PLCParser.T__0);
 			}
 		}
 		catch (re) {
@@ -411,23 +425,23 @@ export class PLCParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 75;
+			this.state = 80;
 			this.match(PLCParser.T__4);
-			this.state = 79;
+			this.state = 84;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			while ((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << PLCParser.T__2) | (1 << PLCParser.T__3) | (1 << PLCParser.T__4) | (1 << PLCParser.T__6) | (1 << PLCParser.T__7) | (1 << PLCParser.T__10) | (1 << PLCParser.T__17) | (1 << PLCParser.T__24) | (1 << PLCParser.INT) | (1 << PLCParser.FLOAT) | (1 << PLCParser.STRING) | (1 << PLCParser.BOOL) | (1 << PLCParser.TYPE) | (1 << PLCParser.ID))) !== 0)) {
 				{
 				{
-				this.state = 76;
+				this.state = 81;
 				this.statement();
 				}
 				}
-				this.state = 81;
+				this.state = 86;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
-			this.state = 82;
+			this.state = 87;
 			this.match(PLCParser.T__5);
 			}
 		}
@@ -452,24 +466,24 @@ export class PLCParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 84;
+			this.state = 89;
 			this.match(PLCParser.T__6);
-			this.state = 85;
+			this.state = 90;
 			this.match(PLCParser.T__7);
-			this.state = 86;
-			this.expression(0);
-			this.state = 87;
-			this.match(PLCParser.T__8);
-			this.state = 88;
-			this.statement();
 			this.state = 91;
+			this.expression(0);
+			this.state = 92;
+			this.match(PLCParser.T__8);
+			this.state = 93;
+			this.statement();
+			this.state = 96;
 			this._errHandler.sync(this);
-			switch ( this.interpreter.adaptivePredict(this._input, 6, this._ctx) ) {
+			switch ( this.interpreter.adaptivePredict(this._input, 8, this._ctx) ) {
 			case 1:
 				{
-				this.state = 89;
+				this.state = 94;
 				this.match(PLCParser.T__9);
-				this.state = 90;
+				this.state = 95;
 				this.statement();
 				}
 				break;
@@ -497,15 +511,15 @@ export class PLCParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 93;
+			this.state = 98;
 			this.match(PLCParser.T__10);
-			this.state = 94;
+			this.state = 99;
 			this.match(PLCParser.T__7);
-			this.state = 95;
+			this.state = 100;
 			this.expression(0);
-			this.state = 96;
+			this.state = 101;
 			this.match(PLCParser.T__8);
-			this.state = 97;
+			this.state = 102;
 			this.statement();
 			}
 		}
@@ -543,21 +557,21 @@ export class PLCParser extends Parser {
 			let _alt: number;
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 113;
+			this.state = 130;
 			this._errHandler.sync(this);
-			switch ( this.interpreter.adaptivePredict(this._input, 7, this._ctx) ) {
+			switch ( this.interpreter.adaptivePredict(this._input, 10, this._ctx) ) {
 			case 1:
 				{
 				_localctx = new AssignmentContext(_localctx);
 				this._ctx = _localctx;
 				_prevctx = _localctx;
 
-				this.state = 100;
+				this.state = 105;
 				this.match(PLCParser.ID);
-				this.state = 101;
+				this.state = 106;
 				this.match(PLCParser.T__11);
-				this.state = 102;
-				this.expression(13);
+				this.state = 107;
+				this.expression(14);
 				}
 				break;
 
@@ -566,10 +580,10 @@ export class PLCParser extends Parser {
 				_localctx = new NotContext(_localctx);
 				this._ctx = _localctx;
 				_prevctx = _localctx;
-				this.state = 103;
+				this.state = 108;
 				this.match(PLCParser.T__24);
-				this.state = 104;
-				this.expression(5);
+				this.state = 109;
+				this.expression(6);
 				}
 				break;
 
@@ -578,10 +592,10 @@ export class PLCParser extends Parser {
 				_localctx = new UnaryMinusContext(_localctx);
 				this._ctx = _localctx;
 				_prevctx = _localctx;
-				this.state = 105;
+				this.state = 110;
 				this.match(PLCParser.T__17);
-				this.state = 106;
-				this.expression(4);
+				this.state = 111;
+				this.expression(5);
 				}
 				break;
 
@@ -590,11 +604,11 @@ export class PLCParser extends Parser {
 				_localctx = new ParensContext(_localctx);
 				this._ctx = _localctx;
 				_prevctx = _localctx;
-				this.state = 107;
+				this.state = 112;
 				this.match(PLCParser.T__7);
-				this.state = 108;
+				this.state = 113;
 				this.expression(0);
-				this.state = 109;
+				this.state = 114;
 				this.match(PLCParser.T__8);
 				}
 				break;
@@ -604,7 +618,7 @@ export class PLCParser extends Parser {
 				_localctx = new LiteralExprContext(_localctx);
 				this._ctx = _localctx;
 				_prevctx = _localctx;
-				this.state = 111;
+				this.state = 116;
 				this.literal();
 				}
 				break;
@@ -614,15 +628,51 @@ export class PLCParser extends Parser {
 				_localctx = new VarExprContext(_localctx);
 				this._ctx = _localctx;
 				_prevctx = _localctx;
-				this.state = 112;
+				this.state = 117;
 				this.match(PLCParser.ID);
+				}
+				break;
+
+			case 7:
+				{
+				_localctx = new MultiAssignmentContext(_localctx);
+				this._ctx = _localctx;
+				_prevctx = _localctx;
+				this.state = 118;
+				this.match(PLCParser.ID);
+				this.state = 119;
+				this.match(PLCParser.T__11);
+				this.state = 120;
+				this.expression(0);
+				this.state = 127;
+				this._errHandler.sync(this);
+				_alt = this.interpreter.adaptivePredict(this._input, 9, this._ctx);
+				while (_alt !== 2 && _alt !== ATN.INVALID_ALT_NUMBER) {
+					if (_alt === 1) {
+						{
+						{
+						this.state = 121;
+						this.match(PLCParser.T__1);
+						this.state = 122;
+						this.match(PLCParser.ID);
+						this.state = 123;
+						this.match(PLCParser.T__11);
+						this.state = 124;
+						this.expression(0);
+						}
+						}
+					}
+					this.state = 129;
+					this._errHandler.sync(this);
+					_alt = this.interpreter.adaptivePredict(this._input, 9, this._ctx);
+				}
 				}
 				break;
 			}
 			this._ctx._stop = this._input.tryLT(-1);
-			this.state = 138;
+			this.state = 155;
 			this._errHandler.sync(this);
-			_alt = this.interpreter.adaptivePredict(this._input, 9, this._ctx);
+			_alt = this.interpreter.adaptivePredict(this._input, 12, this._ctx);
 			while (_alt !== 2 && _alt !== ATN.INVALID_ALT_NUMBER) {
 				if (_alt === 1) {
 					if (this._parseListeners != null) {
@@ -630,21 +680,21 @@ export class PLCParser extends Parser {
 					}
 					_prevctx = _localctx;
 					{
-					this.state = 136;
+					this.state = 153;
 					this._errHandler.sync(this);
-					switch ( this.interpreter.adaptivePredict(this._input, 8, this._ctx) ) {
+					switch ( this.interpreter.adaptivePredict(this._input, 11, this._ctx) ) {
 					case 1:
 						{
 						_localctx = new ConcatContext(new ExpressionContext(_parentctx, _parentState));
 						this.pushNewRecursionContext(_localctx, _startState, PLCParser.RULE_expression);
-						this.state = 115;
-						if (!(this.precpred(this._ctx, 12))) {
-							throw this.createFailedPredicateException("this.precpred(this._ctx, 12)");
+						this.state = 132;
+						if (!(this.precpred(this._ctx, 13))) {
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 13)");
 						}
-						this.state = 116;
+						this.state = 133;
 						this.match(PLCParser.T__12);
-						this.state = 117;
-						this.expression(13);
+						this.state = 134;
+						this.expression(14);
 						}
 						break;
 
@@ -652,11 +702,11 @@ export class PLCParser extends Parser {
 						{
 						_localctx = new MulDivModContext(new ExpressionContext(_parentctx, _parentState));
 						this.pushNewRecursionContext(_localctx, _startState, PLCParser.RULE_expression);
-						this.state = 118;
-						if (!(this.precpred(this._ctx, 11))) {
-							throw this.createFailedPredicateException("this.precpred(this._ctx, 11)");
+						this.state = 135;
+						if (!(this.precpred(this._ctx, 12))) {
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 12)");
 						}
-						this.state = 119;
+						this.state = 136;
 						_la = this._input.LA(1);
 						if (!((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << PLCParser.T__13) | (1 << PLCParser.T__14) | (1 << PLCParser.T__15))) !== 0))) {
 						this._errHandler.recoverInline(this);
@@ -668,8 +718,8 @@ export class PLCParser extends Parser {
 							this._errHandler.reportMatch(this);
 							this.consume();
 						}
-						this.state = 120;
-						this.expression(12);
+						this.state = 137;
+						this.expression(13);
 						}
 						break;
 
@@ -677,11 +727,11 @@ export class PLCParser extends Parser {
 						{
 						_localctx = new AddSubContext(new ExpressionContext(_parentctx, _parentState));
 						this.pushNewRecursionContext(_localctx, _startState, PLCParser.RULE_expression);
-						this.state = 121;
-						if (!(this.precpred(this._ctx, 10))) {
-							throw this.createFailedPredicateException("this.precpred(this._ctx, 10)");
+						this.state = 138;
+						if (!(this.precpred(this._ctx, 11))) {
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 11)");
 						}
-						this.state = 122;
+						this.state = 139;
 						_la = this._input.LA(1);
 						if (!(_la === PLCParser.T__16 || _la === PLCParser.T__17)) {
 						this._errHandler.recoverInline(this);
@@ -693,8 +743,8 @@ export class PLCParser extends Parser {
 							this._errHandler.reportMatch(this);
 							this.consume();
 						}
-						this.state = 123;
-						this.expression(11);
+						this.state = 140;
+						this.expression(12);
 						}
 						break;
 
@@ -702,11 +752,11 @@ export class PLCParser extends Parser {
 						{
 						_localctx = new RelOpContext(new ExpressionContext(_parentctx, _parentState));
 						this.pushNewRecursionContext(_localctx, _startState, PLCParser.RULE_expression);
-						this.state = 124;
-						if (!(this.precpred(this._ctx, 9))) {
-							throw this.createFailedPredicateException("this.precpred(this._ctx, 9)");
+						this.state = 141;
+						if (!(this.precpred(this._ctx, 10))) {
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 10)");
 						}
-						this.state = 125;
+						this.state = 142;
 						_la = this._input.LA(1);
 						if (!(_la === PLCParser.T__18 || _la === PLCParser.T__19)) {
 						this._errHandler.recoverInline(this);
@@ -718,8 +768,8 @@ export class PLCParser extends Parser {
 							this._errHandler.reportMatch(this);
 							this.consume();
 						}
-						this.state = 126;
-						this.expression(10);
+						this.state = 143;
+						this.expression(11);
 						}
 						break;
 
@@ -727,11 +777,11 @@ export class PLCParser extends Parser {
 						{
 						_localctx = new EqNeqContext(new ExpressionContext(_parentctx, _parentState));
 						this.pushNewRecursionContext(_localctx, _startState, PLCParser.RULE_expression);
-						this.state = 127;
-						if (!(this.precpred(this._ctx, 8))) {
-							throw this.createFailedPredicateException("this.precpred(this._ctx, 8)");
+						this.state = 144;
+						if (!(this.precpred(this._ctx, 9))) {
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 9)");
 						}
-						this.state = 128;
+						this.state = 145;
 						_la = this._input.LA(1);
 						if (!(_la === PLCParser.T__20 || _la === PLCParser.T__21)) {
 						this._errHandler.recoverInline(this);
@@ -743,8 +793,8 @@ export class PLCParser extends Parser {
 							this._errHandler.reportMatch(this);
 							this.consume();
 						}
-						this.state = 129;
-						this.expression(9);
+						this.state = 146;
+						this.expression(10);
 						}
 						break;
 
@@ -752,14 +802,14 @@ export class PLCParser extends Parser {
 						{
 						_localctx = new AndContext(new ExpressionContext(_parentctx, _parentState));
 						this.pushNewRecursionContext(_localctx, _startState, PLCParser.RULE_expression);
-						this.state = 130;
-						if (!(this.precpred(this._ctx, 7))) {
-							throw this.createFailedPredicateException("this.precpred(this._ctx, 7)");
+						this.state = 147;
+						if (!(this.precpred(this._ctx, 8))) {
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 8)");
 						}
-						this.state = 131;
+						this.state = 148;
 						this.match(PLCParser.T__22);
-						this.state = 132;
-						this.expression(8);
+						this.state = 149;
+						this.expression(9);
 						}
 						break;
 
@@ -767,22 +817,22 @@ export class PLCParser extends Parser {
 						{
 						_localctx = new OrContext(new ExpressionContext(_parentctx, _parentState));
 						this.pushNewRecursionContext(_localctx, _startState, PLCParser.RULE_expression);
-						this.state = 133;
-						if (!(this.precpred(this._ctx, 6))) {
-							throw this.createFailedPredicateException("this.precpred(this._ctx, 6)");
+						this.state = 150;
+						if (!(this.precpred(this._ctx, 7))) {
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 7)");
 						}
-						this.state = 134;
+						this.state = 151;
 						this.match(PLCParser.T__23);
-						this.state = 135;
-						this.expression(7);
+						this.state = 152;
+						this.expression(8);
 						}
 						break;
 					}
 					}
 				}
-				this.state = 140;
+				this.state = 157;
 				this._errHandler.sync(this);
-				_alt = this.interpreter.adaptivePredict(this._input, 9, this._ctx);
+				_alt = this.interpreter.adaptivePredict(this._input, 12, this._ctx);
 			}
 			}
 		}
@@ -805,14 +855,14 @@ export class PLCParser extends Parser {
 		let _localctx: LiteralContext = new LiteralContext(this._ctx, this.state);
 		this.enterRule(_localctx, 20, PLCParser.RULE_literal);
 		try {
-			this.state = 145;
+			this.state = 162;
 			this._errHandler.sync(this);
 			switch (this._input.LA(1)) {
 			case PLCParser.INT:
 				_localctx = new IntLiteralContext(_localctx);
 				this.enterOuterAlt(_localctx, 1);
 				{
-				this.state = 141;
+				this.state = 158;
 				this.match(PLCParser.INT);
 				}
 				break;
@@ -820,7 +870,7 @@ export class PLCParser extends Parser {
 				_localctx = new FloatLiteralContext(_localctx);
 				this.enterOuterAlt(_localctx, 2);
 				{
-				this.state = 142;
+				this.state = 159;
 				this.match(PLCParser.FLOAT);
 				}
 				break;
@@ -828,7 +878,7 @@ export class PLCParser extends Parser {
 				_localctx = new BoolLiteralContext(_localctx);
 				this.enterOuterAlt(_localctx, 3);
 				{
-				this.state = 143;
+				this.state = 160;
 				this.match(PLCParser.BOOL);
 				}
 				break;
@@ -836,7 +886,7 @@ export class PLCParser extends Parser {
 				_localctx = new StringLiteralContext(_localctx);
 				this.enterOuterAlt(_localctx, 4);
 				{
-				this.state = 144;
+				this.state = 161;
 				this.match(PLCParser.STRING);
 				}
 				break;
@@ -869,92 +919,101 @@ export class PLCParser extends Parser {
 	private expression_sempred(_localctx: ExpressionContext, predIndex: number): boolean {
 		switch (predIndex) {
 		case 0:
-			return this.precpred(this._ctx, 12);
+			return this.precpred(this._ctx, 13);
 
 		case 1:
-			return this.precpred(this._ctx, 11);
+			return this.precpred(this._ctx, 12);
 
 		case 2:
-			return this.precpred(this._ctx, 10);
+			return this.precpred(this._ctx, 11);
 
 		case 3:
-			return this.precpred(this._ctx, 9);
+			return this.precpred(this._ctx, 10);
 
 		case 4:
-			return this.precpred(this._ctx, 8);
+			return this.precpred(this._ctx, 9);
 
 		case 5:
-			return this.precpred(this._ctx, 7);
+			return this.precpred(this._ctx, 8);
 
 		case 6:
-			return this.precpred(this._ctx, 6);
+			return this.precpred(this._ctx, 7);
 		}
 		return true;
 	}
 
 	public static readonly _serializedATN: string =
-		"\x03\uC91D\uCABA\u058D\uAFBA\u4F53\u0607\uEA8B\uC241\x03#\x96\x04\x02" +
+		"\x03\uC91D\uCABA\u058D\uAFBA\u4F53\u0607\uEA8B\uC241\x03#\xA7\x04\x02" +
 		"\t\x02\x04\x03\t\x03\x04\x04\t\x04\x04\x05\t\x05\x04\x06\t\x06\x04\x07" +
 		"\t\x07\x04\b\t\b\x04\t\t\t\x04\n\t\n\x04\v\t\v\x04\f\t\f\x03\x02\x07\x02" +
 		"\x1A\n\x02\f\x02\x0E\x02\x1D\v\x02\x03\x02\x03\x02\x03\x03\x03\x03\x03" +
-		"\x03\x03\x03\x03\x03\x03\x03\x03\x03\x05\x03(\n\x03\x03\x04\x03\x04\x03" +
-		"\x04\x03\x04\x07\x04.\n\x04\f\x04\x0E\x041\v\x04\x03\x04\x03\x04\x03\x05" +
-		"\x03\x05\x03\x05\x03\x06\x03\x06\x03\x06\x03\x06\x07\x06<\n\x06\f\x06" +
-		"\x0E\x06?\v\x06\x03\x06\x03\x06\x03\x07\x03\x07\x03\x07\x03\x07\x07\x07" +
-		"G\n\x07\f\x07\x0E\x07J\v\x07\x03\x07\x03\x07\x03\b\x03\b\x07\bP\n\b\f" +
-		"\b\x0E\bS\v\b\x03\b\x03\b\x03\t\x03\t\x03\t\x03\t\x03\t\x03\t\x03\t\x05" +
-		"\t^\n\t\x03\n\x03\n\x03\n\x03\n\x03\n\x03\n\x03\v\x03\v\x03\v\x03\v\x03" +
-		"\v\x03\v\x03\v\x03\v\x03\v\x03\v\x03\v\x03\v\x03\v\x03\v\x05\vt\n\v\x03" +
+		"\x03\x03\x03\x03\x03\x03\x03\x03\x03\x05\x03(\n\x03\x03\x03\x05\x03+\n" +
+		"\x03\x03\x04\x03\x04\x03\x04\x03\x04\x07\x041\n\x04\f\x04\x0E\x044\v\x04" +
+		"\x03\x04\x03\x04\x03\x05\x03\x05\x03\x05\x03\x06\x03\x06\x03\x06\x03\x06" +
+		"\x07\x06?\n\x06\f\x06\x0E\x06B\v\x06\x03\x06\x03\x06\x03\x07\x03\x07\x03" +
+		"\x07\x03\x07\x07\x07J\n\x07\f\x07\x0E\x07M\v\x07\x05\x07O\n\x07\x03\x07" +
+		"\x03\x07\x03\b\x03\b\x07\bU\n\b\f\b\x0E\bX\v\b\x03\b\x03\b\x03\t\x03\t" +
+		"\x03\t\x03\t\x03\t\x03\t\x03\t\x05\tc\n\t\x03\n\x03\n\x03\n\x03\n\x03" +
+		"\n\x03\n\x03\v\x03\v\x03\v\x03\v\x03\v\x03\v\x03\v\x03\v\x03\v\x03\v\x03" +
+		"\v\x03\v\x03\v\x03\v\x03\v\x03\v\x03\v\x03\v\x03\v\x03\v\x03\v\x07\v\x80" +
+		"\n\v\f\v\x0E\v\x83\v\v\x05\v\x85\n\v\x03\v\x03\v\x03\v\x03\v\x03\v\x03" +
 		"\v\x03\v\x03\v\x03\v\x03\v\x03\v\x03\v\x03\v\x03\v\x03\v\x03\v\x03\v\x03" +
-		"\v\x03\v\x03\v\x03\v\x03\v\x03\v\x03\v\x03\v\x03\v\x07\v\x8B\n\v\f\v\x0E" +
-		"\v\x8E\v\v\x03\f\x03\f\x03\f\x03\f\x05\f\x94\n\f\x03\f\x02\x02\x03\x14" +
-		"\r\x02\x02\x04\x02\x06\x02\b\x02\n\x02\f\x02\x0E\x02\x10\x02\x12\x02\x14" +
-		"\x02\x16\x02\x02\x06\x03\x02\x10\x12\x03\x02\x13\x14\x03\x02\x15\x16\x03" +
-		"\x02\x17\x18\x02\xA5\x02\x1B\x03\x02\x02\x02\x04\'\x03\x02\x02\x02\x06" +
-		")\x03\x02\x02\x02\b4\x03\x02\x02\x02\n7\x03\x02\x02\x02\fB\x03\x02\x02" +
-		"\x02\x0EM\x03\x02\x02\x02\x10V\x03\x02\x02\x02\x12_\x03\x02\x02\x02\x14" +
-		"s\x03\x02\x02\x02\x16\x93\x03\x02\x02\x02\x18\x1A\x05\x04\x03\x02\x19" +
-		"\x18\x03\x02\x02\x02\x1A\x1D\x03\x02\x02\x02\x1B\x19\x03\x02\x02\x02\x1B" +
-		"\x1C\x03\x02\x02\x02\x1C\x1E\x03\x02\x02\x02\x1D\x1B\x03\x02\x02\x02\x1E" +
-		"\x1F\x07\x02\x02\x03\x1F\x03\x03\x02\x02\x02 (\x05\x06\x04\x02!(\x05\b" +
-		"\x05\x02\"(\x05\n\x06\x02#(\x05\f\x07\x02$(\x05\x0E\b\x02%(\x05\x10\t" +
-		"\x02&(\x05\x12\n\x02\' \x03\x02\x02\x02\'!\x03\x02\x02\x02\'\"\x03\x02" +
-		"\x02\x02\'#\x03\x02\x02\x02\'$\x03\x02\x02\x02\'%\x03\x02\x02\x02\'&\x03" +
-		"\x02\x02\x02(\x05\x03\x02\x02\x02)*\x07 \x02\x02*/\x07!\x02\x02+,\x07" +
-		"\x03\x02\x02,.\x07!\x02\x02-+\x03\x02\x02\x02.1\x03\x02\x02\x02/-\x03" +
-		"\x02\x02\x02/0\x03\x02\x02\x0202\x03\x02\x02\x021/\x03\x02\x02\x0223\x07" +
-		"\x04\x02\x023\x07\x03\x02\x02\x0245\x05\x14\v\x0256\x07\x04\x02\x026\t" +
-		"\x03\x02\x02\x0278\x07\x05\x02\x028=\x07!\x02\x029:\x07\x03\x02\x02:<" +
-		"\x07!\x02\x02;9\x03\x02\x02\x02<?\x03\x02\x02\x02=;\x03\x02\x02\x02=>" +
-		"\x03\x02\x02\x02>@\x03\x02\x02\x02?=\x03\x02\x02\x02@A\x07\x04\x02\x02" +
-		"A\v\x03\x02\x02\x02BC\x07\x06\x02\x02CH\x05\x14\v\x02DE\x07\x03\x02\x02" +
-		"EG\x05\x14\v\x02FD\x03\x02\x02\x02GJ\x03\x02\x02\x02HF\x03\x02\x02\x02" +
-		"HI\x03\x02\x02\x02IK\x03\x02\x02\x02JH\x03\x02\x02\x02KL\x07\x04\x02\x02" +
-		"L\r\x03\x02\x02\x02MQ\x07\x07\x02\x02NP\x05\x04\x03\x02ON\x03\x02\x02" +
-		"\x02PS\x03\x02\x02\x02QO\x03\x02\x02\x02QR\x03\x02\x02\x02RT\x03\x02\x02" +
-		"\x02SQ\x03\x02\x02\x02TU\x07\b\x02\x02U\x0F\x03\x02\x02\x02VW\x07\t\x02" +
-		"\x02WX\x07\n\x02\x02XY\x05\x14\v\x02YZ\x07\v\x02\x02Z]\x05\x04\x03\x02" +
-		"[\\\x07\f\x02\x02\\^\x05\x04\x03\x02][\x03\x02\x02\x02]^\x03\x02\x02\x02" +
-		"^\x11\x03\x02\x02\x02_`\x07\r\x02\x02`a\x07\n\x02\x02ab\x05\x14\v\x02" +
-		"bc\x07\v\x02\x02cd\x05\x04\x03\x02d\x13\x03\x02\x02\x02ef\b\v\x01\x02" +
-		"fg\x07!\x02\x02gh\x07\x0E\x02\x02ht\x05\x14\v\x0Fij\x07\x1B\x02\x02jt" +
-		"\x05\x14\v\x07kl\x07\x14\x02\x02lt\x05\x14\v\x06mn\x07\n\x02\x02no\x05" +
-		"\x14\v\x02op\x07\v\x02\x02pt\x03\x02\x02\x02qt\x05\x16\f\x02rt\x07!\x02" +
-		"\x02se\x03\x02\x02\x02si\x03\x02\x02\x02sk\x03\x02\x02\x02sm\x03\x02\x02" +
-		"\x02sq\x03\x02\x02\x02sr\x03\x02\x02\x02t\x8C\x03\x02\x02\x02uv\f\x0E" +
-		"\x02\x02vw\x07\x0F\x02\x02w\x8B\x05\x14\v\x0Fxy\f\r\x02\x02yz\t\x02\x02" +
-		"\x02z\x8B\x05\x14\v\x0E{|\f\f\x02\x02|}\t\x03\x02\x02}\x8B\x05\x14\v\r" +
-		"~\x7F\f\v\x02\x02\x7F\x80\t\x04\x02\x02\x80\x8B\x05\x14\v\f\x81\x82\f" +
-		"\n\x02\x02\x82\x83\t\x05\x02\x02\x83\x8B\x05\x14\v\v\x84\x85\f\t\x02\x02" +
-		"\x85\x86\x07\x19\x02\x02\x86\x8B\x05\x14\v\n\x87\x88\f\b\x02\x02\x88\x89" +
-		"\x07\x1A\x02\x02\x89\x8B\x05\x14\v\t\x8Au\x03\x02\x02\x02\x8Ax\x03\x02" +
-		"\x02\x02\x8A{\x03\x02\x02\x02\x8A~\x03\x02\x02\x02\x8A\x81\x03\x02\x02" +
-		"\x02\x8A\x84\x03\x02\x02\x02\x8A\x87\x03\x02\x02\x02\x8B\x8E\x03\x02\x02" +
-		"\x02\x8C\x8A\x03\x02\x02\x02\x8C\x8D\x03\x02\x02\x02\x8D\x15\x03\x02\x02" +
-		"\x02\x8E\x8C\x03\x02\x02\x02\x8F\x94\x07\x1C\x02\x02\x90\x94\x07\x1D\x02" +
-		"\x02\x91\x94\x07\x1F\x02\x02\x92\x94\x07\x1E\x02\x02\x93\x8F\x03\x02\x02" +
-		"\x02\x93\x90\x03\x02\x02\x02\x93\x91\x03\x02\x02\x02\x93\x92\x03\x02\x02" +
-		"\x02\x94\x17\x03\x02\x02\x02\r\x1B\'/=HQ]s\x8A\x8C\x93";
+		"\v\x03\v\x03\v\x03\v\x07\v\x9C\n\v\f\v\x0E\v\x9F\v\v\x03\f\x03\f\x03\f" +
+		"\x03\f\x05\f\xA5\n\f\x03\f\x02\x02\x03\x14\r\x02\x02\x04\x02\x06\x02\b" +
+		"\x02\n\x02\f\x02\x0E\x02\x10\x02\x12\x02\x14\x02\x16\x02\x02\x06\x03\x02" +
+		"\x10\x12\x03\x02\x13\x14\x03\x02\x15\x16\x03\x02\x17\x18\x02\xBA\x02\x1B" +
+		"\x03\x02\x02\x02\x04\'\x03\x02\x02\x02\x06,\x03\x02\x02\x02\b7\x03\x02" +
+		"\x02\x02\n:\x03\x02\x02\x02\fE\x03\x02\x02\x02\x0ER\x03\x02\x02\x02\x10" +
+		"[\x03\x02\x02\x02\x12d\x03\x02\x02\x02\x14\x84\x03\x02\x02\x02\x16\xA4" +
+		"\x03\x02\x02\x02\x18\x1A\x05\x04\x03\x02\x19\x18\x03\x02\x02\x02\x1A\x1D" +
+		"\x03\x02\x02\x02\x1B\x19\x03\x02\x02\x02\x1B\x1C\x03\x02\x02\x02\x1C\x1E" +
+		"\x03\x02\x02\x02\x1D\x1B\x03\x02\x02\x02\x1E\x1F\x07\x02\x02\x03\x1F\x03" +
+		"\x03\x02\x02\x02 (\x05\x06\x04\x02!(\x05\b\x05\x02\"(\x05\n\x06\x02#(" +
+		"\x05\f\x07\x02$(\x05\x0E\b\x02%(\x05\x10\t\x02&(\x05\x12\n\x02\' \x03" +
+		"\x02\x02\x02\'!\x03\x02\x02\x02\'\"\x03\x02\x02\x02\'#\x03\x02\x02\x02" +
+		"\'$\x03\x02\x02\x02\'%\x03\x02\x02\x02\'&\x03\x02\x02\x02(*\x03\x02\x02" +
+		"\x02)+\x07\x03\x02\x02*)\x03\x02\x02\x02*+\x03\x02\x02\x02+\x05\x03\x02" +
+		"\x02\x02,-\x07 \x02\x02-2\x07!\x02\x02./\x07\x04\x02\x02/1\x07!\x02\x02" +
+		"0.\x03\x02\x02\x0214\x03\x02\x02\x0220\x03\x02\x02\x0223\x03\x02\x02\x02" +
+		"35\x03\x02\x02\x0242\x03\x02\x02\x0256\x07\x03\x02\x026\x07\x03\x02\x02" +
+		"\x0278\x05\x14\v\x0289\x07\x03\x02\x029\t\x03\x02\x02\x02:;\x07\x05\x02" +
+		"\x02;@\x07!\x02\x02<=\x07\x04\x02\x02=?\x07!\x02\x02><\x03\x02\x02\x02" +
+		"?B\x03\x02\x02\x02@>\x03\x02\x02\x02@A\x03\x02\x02\x02AC\x03\x02\x02\x02" +
+		"B@\x03\x02\x02\x02CD\x07\x03\x02\x02D\v\x03\x02\x02\x02EN\x07\x06\x02" +
+		"\x02FK\x05\x14\v\x02GH\x07\x04\x02\x02HJ\x05\x14\v\x02IG\x03\x02\x02\x02" +
+		"JM\x03\x02\x02\x02KI\x03\x02\x02\x02KL\x03\x02\x02\x02LO\x03\x02\x02\x02" +
+		"MK\x03\x02\x02\x02NF\x03\x02\x02\x02NO\x03\x02\x02\x02OP\x03\x02\x02\x02" +
+		"PQ\x07\x03\x02\x02Q\r\x03\x02\x02\x02RV\x07\x07\x02\x02SU\x05\x04\x03" +
+		"\x02TS\x03\x02\x02\x02UX\x03\x02\x02\x02VT\x03\x02\x02\x02VW\x03\x02\x02" +
+		"\x02WY\x03\x02\x02\x02XV\x03\x02\x02\x02YZ\x07\b\x02\x02Z\x0F\x03\x02" +
+		"\x02\x02[\\\x07\t\x02\x02\\]\x07\n\x02\x02]^\x05\x14\v\x02^_\x07\v\x02" +
+		"\x02_b\x05\x04\x03\x02`a\x07\f\x02\x02ac\x05\x04\x03\x02b`\x03\x02\x02" +
+		"\x02bc\x03\x02\x02\x02c\x11\x03\x02\x02\x02de\x07\r\x02\x02ef\x07\n\x02" +
+		"\x02fg\x05\x14\v\x02gh\x07\v\x02\x02hi\x05\x04\x03\x02i\x13\x03\x02\x02" +
+		"\x02jk\b\v\x01\x02kl\x07!\x02\x02lm\x07\x0E\x02\x02m\x85\x05\x14\v\x10" +
+		"no\x07\x1B\x02\x02o\x85\x05\x14\v\bpq\x07\x14\x02\x02q\x85\x05\x14\v\x07" +
+		"rs\x07\n\x02\x02st\x05\x14\v\x02tu\x07\v\x02\x02u\x85\x03\x02\x02\x02" +
+		"v\x85\x05\x16\f\x02w\x85\x07!\x02\x02xy\x07!\x02\x02yz\x07\x0E\x02\x02" +
+		"z\x81\x05\x14\v\x02{|\x07\x04\x02\x02|}\x07!\x02\x02}~\x07\x0E\x02\x02" +
+		"~\x80\x05\x14\v\x02\x7F{\x03\x02\x02\x02\x80\x83\x03\x02\x02\x02\x81\x7F" +
+		"\x03\x02\x02\x02\x81\x82\x03\x02\x02\x02\x82\x85\x03\x02\x02\x02\x83\x81" +
+		"\x03\x02\x02\x02\x84j\x03\x02\x02\x02\x84n\x03\x02\x02\x02\x84p\x03\x02" +
+		"\x02\x02\x84r\x03\x02\x02\x02\x84v\x03\x02\x02\x02\x84w\x03\x02\x02\x02" +
+		"\x84x\x03\x02\x02\x02\x85\x9D\x03\x02\x02\x02\x86\x87\f\x0F\x02\x02\x87" +
+		"\x88\x07\x0F\x02\x02\x88\x9C\x05\x14\v\x10\x89\x8A\f\x0E\x02\x02\x8A\x8B" +
+		"\t\x02\x02\x02\x8B\x9C\x05\x14\v\x0F\x8C\x8D\f\r\x02\x02\x8D\x8E\t\x03" +
+		"\x02\x02\x8E\x9C\x05\x14\v\x0E\x8F\x90\f\f\x02\x02\x90\x91\t\x04\x02\x02" +
+		"\x91\x9C\x05\x14\v\r\x92\x93\f\v\x02\x02\x93\x94\t\x05\x02\x02\x94\x9C" +
+		"\x05\x14\v\f\x95\x96\f\n\x02\x02\x96\x97\x07\x19\x02\x02\x97\x9C\x05\x14" +
+		"\v\v\x98\x99\f\t\x02\x02\x99\x9A\x07\x1A\x02\x02\x9A\x9C\x05\x14\v\n\x9B" +
+		"\x86\x03\x02\x02\x02\x9B\x89\x03\x02\x02\x02\x9B\x8C\x03\x02\x02\x02\x9B" +
+		"\x8F\x03\x02\x02\x02\x9B\x92\x03\x02\x02\x02\x9B\x95\x03\x02\x02\x02\x9B" +
+		"\x98\x03\x02\x02\x02\x9C\x9F\x03\x02\x02\x02\x9D\x9B\x03\x02\x02\x02\x9D" +
+		"\x9E\x03\x02\x02\x02\x9E\x15\x03\x02\x02\x02\x9F\x9D\x03\x02\x02\x02\xA0" +
+		"\xA5\x07\x1C\x02\x02\xA1\xA5\x07\x1D\x02\x02\xA2\xA5\x07\x1F\x02\x02\xA3" +
+		"\xA5\x07\x1E\x02\x02\xA4\xA0\x03\x02\x02\x02\xA4\xA1\x03\x02\x02\x02\xA4" +
+		"\xA2\x03\x02\x02\x02\xA4\xA3\x03\x02\x02\x02\xA5\x17\x03\x02\x02\x02\x10" +
+		"\x1B\'*2@KNVb\x81\x84\x9B\x9D\xA4";
 	public static __ATN: ATN;
 	public static get _ATN(): ATN {
 		if (!PLCParser.__ATN) {
@@ -1739,6 +1798,50 @@ export class VarExprContext extends ExpressionContext {
 	public accept<Result>(visitor: PLCVisitor<Result>): Result {
 		if (visitor.visitVarExpr) {
 			return visitor.visitVarExpr(this);
+		} else {
+			return visitor.visitChildren(this);
+		}
+	}
+}
+export class MultiAssignmentContext extends ExpressionContext {
+	public ID(): TerminalNode[];
+	public ID(i: number): TerminalNode;
+	public ID(i?: number): TerminalNode | TerminalNode[] {
+		if (i === undefined) {
+			return this.getTokens(PLCParser.ID);
+		} else {
+			return this.getToken(PLCParser.ID, i);
+		}
+	}
+	public expression(): ExpressionContext[];
+	public expression(i: number): ExpressionContext;
+	public expression(i?: number): ExpressionContext | ExpressionContext[] {
+		if (i === undefined) {
+			return this.getRuleContexts(ExpressionContext);
+		} else {
+			return this.getRuleContext(i, ExpressionContext);
+		}
+	}
+	constructor(ctx: ExpressionContext) {
+		super(ctx.parent, ctx.invokingState);
+		this.copyFrom(ctx);
+	}
+	// @Override
+	public enterRule(listener: PLCListener): void {
+		if (listener.enterMultiAssignment) {
+			listener.enterMultiAssignment(this);
+		}
+	}
+	// @Override
+	public exitRule(listener: PLCListener): void {
+		if (listener.exitMultiAssignment) {
+			listener.exitMultiAssignment(this);
+		}
+	}
+	// @Override
+	public accept<Result>(visitor: PLCVisitor<Result>): Result {
+		if (visitor.visitMultiAssignment) {
+			return visitor.visitMultiAssignment(this);
 		} else {
 			return visitor.visitChildren(this);
 		}
