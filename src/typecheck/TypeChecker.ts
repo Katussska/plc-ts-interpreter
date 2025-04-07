@@ -1,6 +1,7 @@
-import { AbstractParseTreeVisitor } from 'antlr4ts/tree/AbstractParseTreeVisitor';
-import { PLCVisitor } from '../parser/src/grammar/PLCVisitor';
+import {AbstractParseTreeVisitor} from 'antlr4ts/tree/AbstractParseTreeVisitor';
+import {PLCVisitor} from '../parser/src/grammar/PLCVisitor';
 import * as PLCParser from '../parser/src/grammar/PLCParser';
+import chalk from 'chalk';
 
 type Type = 'int' | 'float' | 'bool' | 'string' | 'undefined';
 
@@ -9,14 +10,26 @@ interface VariableTable {
 }
 
 export class TypeChecker
-  extends AbstractParseTreeVisitor<Type | void>
-  implements PLCVisitor<Type | void>
+    extends AbstractParseTreeVisitor<Type | void>
+    implements PLCVisitor<Type | void>
 {
-  public errors: string[] = [];
+  public errors: { message: string; line: number }[] = [];
   private variables: VariableTable = {};
 
   defaultResult(): Type | void {
     return;
+  }
+
+  // Method to print errors
+  public printErrors(): void {
+    if (this.errors.length === 0) {
+      console.log(chalk.green('No errors found.'));
+      return;
+    }
+
+    this.errors.forEach(error => {
+      console.log(chalk.red(`Error on line ${error.line}: ${error.message}`));
+    });
   }
 
   // Visit methods for the parse tree
@@ -55,7 +68,7 @@ export class TypeChecker
       const varName = ctx.ID(i).text;
 
       if (this.variables[varName]) {
-        this.errors.push(`Variable '${varName}' already declared`);
+        this.addError(`Variable '${varName}' already declared`, ctx.start.line);
       } else {
         this.variables[varName] = typeText;
       }
@@ -74,7 +87,7 @@ export class TypeChecker
       const varName = ctx.ID(i).text;
 
       if (!this.variables[varName]) {
-        this.errors.push(`Cannot read into undeclared variable '${varName}'`);
+        this.addError(`Cannot read into undeclared variable '${varName}'`, ctx.start.line);
       }
     }
   }
@@ -97,7 +110,7 @@ export class TypeChecker
     // Check that the condition is a boolean
     const conditionType = this.visit(ctx.expression());
     if (conditionType !== 'bool') {
-      throw new Error(`If condition must be a boolean, got ${conditionType}`);
+      this.addError(`If condition must be a boolean, got ${conditionType}`, ctx.start.line);
     }
 
     // Check the statement(s) if they exist
@@ -118,9 +131,7 @@ export class TypeChecker
   visitWhileStmt(ctx: PLCParser.WhileStmtContext): void {
     const condType = this.visit(ctx.expression()) as Type;
     if (condType !== 'bool') {
-      this.errors.push(
-        `Condition in 'while' must be of type bool, got ${condType}`,
-      );
+      this.addError(`Condition in 'while' must be of type bool, got ${condType}`, ctx.start.line);
     }
 
     this.visit(ctx.statement());
@@ -132,7 +143,7 @@ export class TypeChecker
     const exprType = this.visit(ctx.expression()) as Type;
 
     if (!this.variables[varName]) {
-      this.errors.push(`Variable '${varName}' not declared`);
+      this.addError(`Variable '${varName}' not declared`, ctx.start.line);
       return 'undefined';
     }
 
@@ -140,9 +151,7 @@ export class TypeChecker
     if (this.variables[varName] !== exprType && exprType !== 'undefined') {
       // Special case: Allow int to float conversion but not float to int
       if (!(this.variables[varName] === 'float' && exprType === 'int')) {
-        this.errors.push(
-          `Type mismatch in assignment to '${varName}': expected ${this.variables[varName]}, got ${exprType}`,
-        );
+        this.addError(`Type mismatch in assignment to '${varName}': expected ${this.variables[varName]}, got ${exprType}`, ctx.start.line);
         return 'undefined';
       }
     }
@@ -158,9 +167,7 @@ export class TypeChecker
     if (left === 'string' && right === 'string') {
       return 'string';
     } else {
-      this.errors.push(
-        `Concatenation operator '.' requires string operands, got ${left} and ${right}`,
-      );
+      this.addError(`Concatenation operator '.' requires string operands, got ${left} and ${right}`, ctx.start.line);
       return 'undefined';
     }
   }
@@ -181,17 +188,15 @@ export class TypeChecker
       if (left === 'int' && right === 'int') {
         return 'int';
       } else {
-        this.errors.push(
-          `Modulo operator '%' requires integer operands, got ${left} and ${right}`,
-        );
+        this.addError(`Modulo operator '%' requires integer operands, got ${left} and ${right}`, ctx.start.line);
         return 'undefined';
       }
     }
 
     // For * and / operators
     if (
-      (left === 'int' || left === 'float') &&
-      (right === 'int' || right === 'float')
+        (left === 'int' || left === 'float') &&
+        (right === 'int' || right === 'float')
     ) {
       // If either operand is float, result is float
       if (left === 'float' || right === 'float') {
@@ -200,9 +205,7 @@ export class TypeChecker
         return 'int';
       }
     } else {
-      this.errors.push(
-        `Invalid operand types for ${op}: ${left} and ${right}, expected numeric types`,
-      );
+      this.addError(`Invalid operand types for ${op}: ${left} and ${right}, expected numeric types`, ctx.start.line);
       return 'undefined';
     }
   }
@@ -219,8 +222,8 @@ export class TypeChecker
     }
 
     if (
-      (left === 'int' || left === 'float') &&
-      (right === 'int' || right === 'float')
+        (left === 'int' || left === 'float') &&
+        (right === 'int' || right === 'float')
     ) {
       // If either operand is float, result is float
       if (left === 'float' || right === 'float') {
@@ -229,9 +232,7 @@ export class TypeChecker
         return 'int';
       }
     } else {
-      this.errors.push(
-        `Invalid operand types for ${op}: ${left} and ${right}, expected numeric types`,
-      );
+      this.addError(`Invalid operand types for ${op}: ${left} and ${right}, expected numeric types`, ctx.start.line);
       return 'undefined';
     }
   }
@@ -248,14 +249,12 @@ export class TypeChecker
     }
 
     if (
-      (left === 'int' || left === 'float') &&
-      (right === 'int' || right === 'float')
+        (left === 'int' || left === 'float') &&
+        (right === 'int' || right === 'float')
     ) {
       return 'bool';
     } else {
-      this.errors.push(
-        `Invalid operand types for comparison ${op}: ${left} and ${right}, expected numeric types`,
-      );
+      this.addError(`Invalid operand types for comparison ${op}: ${left} and ${right}, expected numeric types`, ctx.start.line);
       return 'undefined';
     }
   }
@@ -273,16 +272,14 @@ export class TypeChecker
 
     // Allow comparisons between int and float
     if (
-      (left === 'int' || left === 'float') &&
-      (right === 'int' || right === 'float')
+        (left === 'int' || left === 'float') &&
+        (right === 'int' || right === 'float')
     ) {
       return 'bool';
     } else if (left === right && left !== 'undefined') {
       return 'bool';
     } else {
-      this.errors.push(
-        `Invalid operand types for equality check ${op}: ${left} and ${right}, they must be compatible types`,
-      );
+      this.addError(`Invalid operand types for equality check ${op}: ${left} and ${right}, they must be compatible types`, ctx.start.line);
       return 'undefined';
     }
   }
@@ -295,9 +292,7 @@ export class TypeChecker
     if (left === 'bool' && right === 'bool') {
       return 'bool';
     } else {
-      this.errors.push(
-        `Logical AND requires boolean operands, got ${left} and ${right}`,
-      );
+      this.addError(`Logical AND requires boolean operands, got ${left} and ${right}`, ctx.start.line);
       return 'undefined';
     }
   }
@@ -310,9 +305,7 @@ export class TypeChecker
     if (left === 'bool' && right === 'bool') {
       return 'bool';
     } else {
-      this.errors.push(
-        `Logical OR requires boolean operands, got ${left} and ${right}`,
-      );
+      this.addError(`Logical OR requires boolean operands, got ${left} and ${right}`, ctx.start.line);
       return 'undefined';
     }
   }
@@ -321,7 +314,7 @@ export class TypeChecker
   visitNot(ctx: PLCParser.NotContext): Type {
     const exprType = this.visit(ctx.expression()) as Type;
     if (exprType !== 'bool') {
-      this.errors.push(`Logical NOT requires boolean operand, got ${exprType}`);
+      this.addError(`Logical NOT requires boolean operand, got ${exprType}`, ctx.start.line);
       return 'undefined';
     }
     return 'bool';
@@ -331,7 +324,7 @@ export class TypeChecker
   visitUnaryMinus(ctx: PLCParser.UnaryMinusContext): Type {
     const exprType = this.visit(ctx.expression()) as Type;
     if (exprType !== 'int' && exprType !== 'float') {
-      this.errors.push(`Unary minus requires numeric operand, got ${exprType}`);
+      this.addError(`Unary minus requires numeric operand, got ${exprType}`, ctx.start.line);
       return 'undefined';
     }
     return exprType;
@@ -352,7 +345,7 @@ export class TypeChecker
     const name = ctx.ID().text;
     const t = this.variables[name];
     if (!t) {
-      this.errors.push(`Variable '${name}' not declared`);
+      this.addError(`Variable '${name}' not declared`, ctx.start.line);
       return 'undefined';
     }
     return t;
@@ -373,5 +366,10 @@ export class TypeChecker
 
   visitStringLiteral(ctx: PLCParser.StringLiteralContext): Type {
     return 'string';
+  }
+
+  // Method to add an error with line number
+  private addError(message: string, line: number): void {
+    this.errors.push({ message, line });
   }
 }

@@ -48,7 +48,7 @@ expression
     | '-' expression                             # unaryMinus
     | '(' expression ')'                         # parens
     | literal                                    # literalExpr
-    | ID                                        # varExpr
+    | ID                                         # varExpr
     | ID '=' expression (',' ID '=' expression)* # multiAssignment
     ;
 

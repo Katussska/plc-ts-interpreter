@@ -1,8 +1,8 @@
-import { CharStreams, CommonTokenStream } from 'antlr4ts';
-import { PLCLexer } from './parser/src/grammar/PLCLexer';
-import { PLCParser } from './parser/src/grammar/PLCParser';
-import { TypeChecker } from './typecheck/TypeChecker';
-import { SyntaxErrorListener } from './typecheck/SyntaxErrorListener';
+import {CharStreams, CommonTokenStream} from 'antlr4ts';
+import {PLCLexer} from './parser/src/grammar/PLCLexer';
+import {PLCParser} from './parser/src/grammar/PLCParser';
+import {TypeChecker} from './typecheck/TypeChecker';
+import {SyntaxErrorListener} from './typecheck/SyntaxErrorListener';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -26,17 +26,17 @@ if (inputFile) {
         x = 0;
         bool flag;
         flag = true;
-        
+
         if (flag) {
           x = x + 1;
         } else {
           x = x - 1;
         }
-        
+
         while (x < 10 && flag) {
           x = x + 1;
         }
-        
+
         write "Final value of x: ", x;
     `;
 }
@@ -69,9 +69,9 @@ const typeChecker = new TypeChecker();
 typeChecker.visit(tree);
 
 // Report type errors
+typeChecker.printErrors();
+
 if (typeChecker.errors.length > 0) {
-  console.error('❌ Type Errors:');
-  typeChecker.errors.forEach((err: string) => console.error('  ' + err));
   process.exit(1);
 }
 
