@@ -47,38 +47,42 @@ export class PLCParser extends Parser {
 	public static readonly T__16 = 17;
 	public static readonly T__17 = 18;
 	public static readonly T__18 = 19;
-	public static readonly ID = 20;
-	public static readonly INT = 21;
-	public static readonly FLOAT = 22;
-	public static readonly BOOL = 23;
-	public static readonly WS = 24;
-	public static readonly NEWLINE = 25;
-	public static readonly COMMENT = 26;
+	public static readonly T__19 = 20;
+	public static readonly T__20 = 21;
+	public static readonly T__21 = 22;
+	public static readonly T__22 = 23;
+	public static readonly T__23 = 24;
+	public static readonly T__24 = 25;
+	public static readonly BOOLEAN = 26;
+	public static readonly INTEGER = 27;
+	public static readonly IDENTIFIER = 28;
+	public static readonly WS = 29;
 	public static readonly RULE_program = 0;
 	public static readonly RULE_statement = 1;
-	public static readonly RULE_assignment = 2;
-	public static readonly RULE_declaration = 3;
-	public static readonly RULE_functionCall = 4;
-	public static readonly RULE_ifStatement = 5;
-	public static readonly RULE_whileStatement = 6;
+	public static readonly RULE_variableDeclaration = 2;
+	public static readonly RULE_assignment = 3;
+	public static readonly RULE_ifStatement = 4;
+	public static readonly RULE_whileStatement = 5;
+	public static readonly RULE_block = 6;
 	public static readonly RULE_expression = 7;
 	public static readonly RULE_type = 8;
 	// tslint:disable:no-trailing-whitespace
 	public static readonly ruleNames: string[] = [
-		"program", "statement", "assignment", "declaration", "functionCall", "ifStatement", 
-		"whileStatement", "expression", "type",
+		"program", "statement", "variableDeclaration", "assignment", "ifStatement", 
+		"whileStatement", "block", "expression", "type",
 	];
 
 	private static readonly _LITERAL_NAMES: Array<string | undefined> = [
-		undefined, "'='", "'let'", "':'", "'('", "','", "')'", "'if'", "'then'", 
-		"'else'", "'end'", "'while'", "'do'", "'*'", "'/'", "'+'", "'-'", "'int'", 
-		"'float'", "'bool'",
+		undefined, "'let'", "':'", "'='", "'if'", "'('", "')'", "'else'", "'while'", 
+		"'{'", "'}'", "'*'", "'/'", "'+'", "'-'", "'=='", "'!='", "'<'", "'>'", 
+		"'<='", "'>='", "'and'", "'or'", "'not'", "'int'", "'bool'",
 	];
 	private static readonly _SYMBOLIC_NAMES: Array<string | undefined> = [
 		undefined, undefined, undefined, undefined, undefined, undefined, undefined, 
 		undefined, undefined, undefined, undefined, undefined, undefined, undefined, 
-		undefined, undefined, undefined, undefined, undefined, undefined, "ID", 
-		"INT", "FLOAT", "BOOL", "WS", "NEWLINE", "COMMENT",
+		undefined, undefined, undefined, undefined, undefined, undefined, undefined, 
+		undefined, undefined, undefined, undefined, undefined, "BOOLEAN", "INTEGER", 
+		"IDENTIFIER", "WS",
 	];
 	public static readonly VOCABULARY: Vocabulary = new VocabularyImpl(PLCParser._LITERAL_NAMES, PLCParser._SYMBOLIC_NAMES, []);
 
@@ -114,23 +118,21 @@ export class PLCParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 23;
+			this.state = 21;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
-			while ((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << PLCParser.T__1) | (1 << PLCParser.T__6) | (1 << PLCParser.T__10) | (1 << PLCParser.ID))) !== 0)) {
+			while ((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << PLCParser.T__0) | (1 << PLCParser.T__3) | (1 << PLCParser.T__7) | (1 << PLCParser.T__8) | (1 << PLCParser.IDENTIFIER))) !== 0)) {
 				{
 				{
 				this.state = 18;
 				this.statement();
-				this.state = 19;
-				this.match(PLCParser.NEWLINE);
 				}
 				}
-				this.state = 25;
+				this.state = 23;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
-			this.state = 26;
+			this.state = 24;
 			this.match(PLCParser.EOF);
 			}
 		}
@@ -153,48 +155,81 @@ export class PLCParser extends Parser {
 		let _localctx: StatementContext = new StatementContext(this._ctx, this.state);
 		this.enterRule(_localctx, 2, PLCParser.RULE_statement);
 		try {
-			this.state = 33;
+			this.state = 31;
 			this._errHandler.sync(this);
-			switch ( this.interpreter.adaptivePredict(this._input, 1, this._ctx) ) {
-			case 1:
+			switch (this._input.LA(1)) {
+			case PLCParser.T__0:
 				this.enterOuterAlt(_localctx, 1);
 				{
-				this.state = 28;
+				this.state = 26;
+				this.variableDeclaration();
+				}
+				break;
+			case PLCParser.IDENTIFIER:
+				this.enterOuterAlt(_localctx, 2);
+				{
+				this.state = 27;
 				this.assignment();
 				}
 				break;
-
-			case 2:
-				this.enterOuterAlt(_localctx, 2);
-				{
-				this.state = 29;
-				this.declaration();
-				}
-				break;
-
-			case 3:
+			case PLCParser.T__3:
 				this.enterOuterAlt(_localctx, 3);
 				{
-				this.state = 30;
-				this.functionCall();
-				}
-				break;
-
-			case 4:
-				this.enterOuterAlt(_localctx, 4);
-				{
-				this.state = 31;
+				this.state = 28;
 				this.ifStatement();
 				}
 				break;
-
-			case 5:
-				this.enterOuterAlt(_localctx, 5);
+			case PLCParser.T__7:
+				this.enterOuterAlt(_localctx, 4);
 				{
-				this.state = 32;
+				this.state = 29;
 				this.whileStatement();
 				}
 				break;
+			case PLCParser.T__8:
+				this.enterOuterAlt(_localctx, 5);
+				{
+				this.state = 30;
+				this.block();
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
+			}
+		}
+		catch (re) {
+			if (re instanceof RecognitionException) {
+				_localctx.exception = re;
+				this._errHandler.reportError(this, re);
+				this._errHandler.recover(this, re);
+			} else {
+				throw re;
+			}
+		}
+		finally {
+			this.exitRule();
+		}
+		return _localctx;
+	}
+	// @RuleVersion(0)
+	public variableDeclaration(): VariableDeclarationContext {
+		let _localctx: VariableDeclarationContext = new VariableDeclarationContext(this._ctx, this.state);
+		this.enterRule(_localctx, 4, PLCParser.RULE_variableDeclaration);
+		try {
+			this.enterOuterAlt(_localctx, 1);
+			{
+			this.state = 33;
+			this.match(PLCParser.T__0);
+			this.state = 34;
+			this.match(PLCParser.IDENTIFIER);
+			this.state = 35;
+			this.match(PLCParser.T__1);
+			this.state = 36;
+			this.type();
+			this.state = 37;
+			this.match(PLCParser.T__2);
+			this.state = 38;
+			this.expression(0);
 			}
 		}
 		catch (re) {
@@ -214,124 +249,16 @@ export class PLCParser extends Parser {
 	// @RuleVersion(0)
 	public assignment(): AssignmentContext {
 		let _localctx: AssignmentContext = new AssignmentContext(this._ctx, this.state);
-		this.enterRule(_localctx, 4, PLCParser.RULE_assignment);
+		this.enterRule(_localctx, 6, PLCParser.RULE_assignment);
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 35;
-			this.match(PLCParser.ID);
-			this.state = 36;
-			this.match(PLCParser.T__0);
-			this.state = 37;
-			this.expression(0);
-			}
-		}
-		catch (re) {
-			if (re instanceof RecognitionException) {
-				_localctx.exception = re;
-				this._errHandler.reportError(this, re);
-				this._errHandler.recover(this, re);
-			} else {
-				throw re;
-			}
-		}
-		finally {
-			this.exitRule();
-		}
-		return _localctx;
-	}
-	// @RuleVersion(0)
-	public declaration(): DeclarationContext {
-		let _localctx: DeclarationContext = new DeclarationContext(this._ctx, this.state);
-		this.enterRule(_localctx, 6, PLCParser.RULE_declaration);
-		let _la: number;
-		try {
-			this.enterOuterAlt(_localctx, 1);
-			{
-			this.state = 39;
-			this.match(PLCParser.T__1);
 			this.state = 40;
-			this.match(PLCParser.ID);
-			this.state = 43;
-			this._errHandler.sync(this);
-			_la = this._input.LA(1);
-			if (_la === PLCParser.T__2) {
-				{
-				this.state = 41;
-				this.match(PLCParser.T__2);
-				this.state = 42;
-				this.type();
-				}
-			}
-
-			this.state = 47;
-			this._errHandler.sync(this);
-			_la = this._input.LA(1);
-			if (_la === PLCParser.T__0) {
-				{
-				this.state = 45;
-				this.match(PLCParser.T__0);
-				this.state = 46;
-				this.expression(0);
-				}
-			}
-
-			}
-		}
-		catch (re) {
-			if (re instanceof RecognitionException) {
-				_localctx.exception = re;
-				this._errHandler.reportError(this, re);
-				this._errHandler.recover(this, re);
-			} else {
-				throw re;
-			}
-		}
-		finally {
-			this.exitRule();
-		}
-		return _localctx;
-	}
-	// @RuleVersion(0)
-	public functionCall(): FunctionCallContext {
-		let _localctx: FunctionCallContext = new FunctionCallContext(this._ctx, this.state);
-		this.enterRule(_localctx, 8, PLCParser.RULE_functionCall);
-		let _la: number;
-		try {
-			this.enterOuterAlt(_localctx, 1);
-			{
-			this.state = 49;
-			this.match(PLCParser.ID);
-			this.state = 50;
-			this.match(PLCParser.T__3);
-			this.state = 59;
-			this._errHandler.sync(this);
-			_la = this._input.LA(1);
-			if ((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << PLCParser.T__3) | (1 << PLCParser.ID) | (1 << PLCParser.INT) | (1 << PLCParser.FLOAT) | (1 << PLCParser.BOOL))) !== 0)) {
-				{
-				this.state = 51;
-				this.expression(0);
-				this.state = 56;
-				this._errHandler.sync(this);
-				_la = this._input.LA(1);
-				while (_la === PLCParser.T__4) {
-					{
-					{
-					this.state = 52;
-					this.match(PLCParser.T__4);
-					this.state = 53;
-					this.expression(0);
-					}
-					}
-					this.state = 58;
-					this._errHandler.sync(this);
-					_la = this._input.LA(1);
-				}
-				}
-			}
-
-			this.state = 61;
-			this.match(PLCParser.T__5);
+			this.match(PLCParser.IDENTIFIER);
+			this.state = 41;
+			this.match(PLCParser.T__2);
+			this.state = 42;
+			this.expression(0);
 			}
 		}
 		catch (re) {
@@ -351,65 +278,33 @@ export class PLCParser extends Parser {
 	// @RuleVersion(0)
 	public ifStatement(): IfStatementContext {
 		let _localctx: IfStatementContext = new IfStatementContext(this._ctx, this.state);
-		this.enterRule(_localctx, 10, PLCParser.RULE_ifStatement);
+		this.enterRule(_localctx, 8, PLCParser.RULE_ifStatement);
 		let _la: number;
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 63;
-			this.match(PLCParser.T__6);
-			this.state = 64;
+			this.state = 44;
+			this.match(PLCParser.T__3);
+			this.state = 45;
+			this.match(PLCParser.T__4);
+			this.state = 46;
 			this.expression(0);
-			this.state = 65;
-			this.match(PLCParser.T__7);
-			this.state = 66;
-			this.match(PLCParser.NEWLINE);
-			this.state = 72;
+			this.state = 47;
+			this.match(PLCParser.T__5);
+			this.state = 48;
+			this.block();
+			this.state = 51;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
-			while ((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << PLCParser.T__1) | (1 << PLCParser.T__6) | (1 << PLCParser.T__10) | (1 << PLCParser.ID))) !== 0)) {
+			if (_la === PLCParser.T__6) {
 				{
-				{
-				this.state = 67;
-				this.statement();
-				this.state = 68;
-				this.match(PLCParser.NEWLINE);
-				}
-				}
-				this.state = 74;
-				this._errHandler.sync(this);
-				_la = this._input.LA(1);
-			}
-			this.state = 85;
-			this._errHandler.sync(this);
-			_la = this._input.LA(1);
-			if (_la === PLCParser.T__8) {
-				{
-				this.state = 75;
-				this.match(PLCParser.T__8);
-				this.state = 76;
-				this.match(PLCParser.NEWLINE);
-				this.state = 82;
-				this._errHandler.sync(this);
-				_la = this._input.LA(1);
-				while ((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << PLCParser.T__1) | (1 << PLCParser.T__6) | (1 << PLCParser.T__10) | (1 << PLCParser.ID))) !== 0)) {
-					{
-					{
-					this.state = 77;
-					this.statement();
-					this.state = 78;
-					this.match(PLCParser.NEWLINE);
-					}
-					}
-					this.state = 84;
-					this._errHandler.sync(this);
-					_la = this._input.LA(1);
-				}
+				this.state = 49;
+				this.match(PLCParser.T__6);
+				this.state = 50;
+				this.block();
 				}
 			}
 
-			this.state = 87;
-			this.match(PLCParser.T__9);
 			}
 		}
 		catch (re) {
@@ -429,36 +324,61 @@ export class PLCParser extends Parser {
 	// @RuleVersion(0)
 	public whileStatement(): WhileStatementContext {
 		let _localctx: WhileStatementContext = new WhileStatementContext(this._ctx, this.state);
-		this.enterRule(_localctx, 12, PLCParser.RULE_whileStatement);
+		this.enterRule(_localctx, 10, PLCParser.RULE_whileStatement);
+		try {
+			this.enterOuterAlt(_localctx, 1);
+			{
+			this.state = 53;
+			this.match(PLCParser.T__7);
+			this.state = 54;
+			this.match(PLCParser.T__4);
+			this.state = 55;
+			this.expression(0);
+			this.state = 56;
+			this.match(PLCParser.T__5);
+			this.state = 57;
+			this.block();
+			}
+		}
+		catch (re) {
+			if (re instanceof RecognitionException) {
+				_localctx.exception = re;
+				this._errHandler.reportError(this, re);
+				this._errHandler.recover(this, re);
+			} else {
+				throw re;
+			}
+		}
+		finally {
+			this.exitRule();
+		}
+		return _localctx;
+	}
+	// @RuleVersion(0)
+	public block(): BlockContext {
+		let _localctx: BlockContext = new BlockContext(this._ctx, this.state);
+		this.enterRule(_localctx, 12, PLCParser.RULE_block);
 		let _la: number;
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 89;
-			this.match(PLCParser.T__10);
-			this.state = 90;
-			this.expression(0);
-			this.state = 91;
-			this.match(PLCParser.T__11);
-			this.state = 92;
-			this.match(PLCParser.NEWLINE);
-			this.state = 98;
+			this.state = 59;
+			this.match(PLCParser.T__8);
+			this.state = 63;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
-			while ((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << PLCParser.T__1) | (1 << PLCParser.T__6) | (1 << PLCParser.T__10) | (1 << PLCParser.ID))) !== 0)) {
+			while ((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << PLCParser.T__0) | (1 << PLCParser.T__3) | (1 << PLCParser.T__7) | (1 << PLCParser.T__8) | (1 << PLCParser.IDENTIFIER))) !== 0)) {
 				{
 				{
-				this.state = 93;
+				this.state = 60;
 				this.statement();
-				this.state = 94;
-				this.match(PLCParser.NEWLINE);
 				}
 				}
-				this.state = 100;
+				this.state = 65;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
-			this.state = 101;
+			this.state = 66;
 			this.match(PLCParser.T__9);
 			}
 		}
@@ -496,50 +416,68 @@ export class PLCParser extends Parser {
 			let _alt: number;
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 112;
+			this.state = 78;
 			this._errHandler.sync(this);
 			switch (this._input.LA(1)) {
-			case PLCParser.T__3:
+			case PLCParser.T__22:
 				{
-				this.state = 104;
-				this.match(PLCParser.T__3);
-				this.state = 105;
+				_localctx = new NotExprContext(_localctx);
+				this._ctx = _localctx;
+				_prevctx = _localctx;
+
+				this.state = 69;
+				this.match(PLCParser.T__22);
+				this.state = 70;
+				this.expression(5);
+				}
+				break;
+			case PLCParser.T__4:
+				{
+				_localctx = new ParenExprContext(_localctx);
+				this._ctx = _localctx;
+				_prevctx = _localctx;
+				this.state = 71;
+				this.match(PLCParser.T__4);
+				this.state = 72;
 				this.expression(0);
-				this.state = 106;
+				this.state = 73;
 				this.match(PLCParser.T__5);
 				}
 				break;
-			case PLCParser.INT:
+			case PLCParser.BOOLEAN:
 				{
-				this.state = 108;
-				this.match(PLCParser.INT);
+				_localctx = new BooleanLiteralContext(_localctx);
+				this._ctx = _localctx;
+				_prevctx = _localctx;
+				this.state = 75;
+				this.match(PLCParser.BOOLEAN);
 				}
 				break;
-			case PLCParser.FLOAT:
+			case PLCParser.INTEGER:
 				{
-				this.state = 109;
-				this.match(PLCParser.FLOAT);
+				_localctx = new IntLiteralContext(_localctx);
+				this._ctx = _localctx;
+				_prevctx = _localctx;
+				this.state = 76;
+				this.match(PLCParser.INTEGER);
 				}
 				break;
-			case PLCParser.BOOL:
+			case PLCParser.IDENTIFIER:
 				{
-				this.state = 110;
-				this.match(PLCParser.BOOL);
-				}
-				break;
-			case PLCParser.ID:
-				{
-				this.state = 111;
-				this.match(PLCParser.ID);
+				_localctx = new IdentifierExprContext(_localctx);
+				this._ctx = _localctx;
+				_prevctx = _localctx;
+				this.state = 77;
+				this.match(PLCParser.IDENTIFIER);
 				}
 				break;
 			default:
 				throw new NoViableAltException(this);
 			}
 			this._ctx._stop = this._input.tryLT(-1);
-			this.state = 122;
+			this.state = 94;
 			this._errHandler.sync(this);
-			_alt = this.interpreter.adaptivePredict(this._input, 12, this._ctx);
+			_alt = this.interpreter.adaptivePredict(this._input, 6, this._ctx);
 			while (_alt !== 2 && _alt !== ATN.INVALID_ALT_NUMBER) {
 				if (_alt === 1) {
 					if (this._parseListeners != null) {
@@ -547,22 +485,22 @@ export class PLCParser extends Parser {
 					}
 					_prevctx = _localctx;
 					{
-					this.state = 120;
+					this.state = 92;
 					this._errHandler.sync(this);
-					switch ( this.interpreter.adaptivePredict(this._input, 11, this._ctx) ) {
+					switch ( this.interpreter.adaptivePredict(this._input, 5, this._ctx) ) {
 					case 1:
 						{
-						_localctx = new ExpressionContext(_parentctx, _parentState);
+						_localctx = new MulDivExprContext(new ExpressionContext(_parentctx, _parentState));
 						this.pushNewRecursionContext(_localctx, _startState, PLCParser.RULE_expression);
-						this.state = 114;
-						if (!(this.precpred(this._ctx, 7))) {
-							throw this.createFailedPredicateException("this.precpred(this._ctx, 7)");
+						this.state = 80;
+						if (!(this.precpred(this._ctx, 9))) {
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 9)");
 						}
-						this.state = 115;
-						_localctx._op = this._input.LT(1);
+						this.state = 81;
+						(_localctx as MulDivExprContext)._op = this._input.LT(1);
 						_la = this._input.LA(1);
-						if (!(_la === PLCParser.T__12 || _la === PLCParser.T__13)) {
-							_localctx._op = this._errHandler.recoverInline(this);
+						if (!(_la === PLCParser.T__10 || _la === PLCParser.T__11)) {
+							(_localctx as MulDivExprContext)._op = this._errHandler.recoverInline(this);
 						} else {
 							if (this._input.LA(1) === Token.EOF) {
 								this.matchedEOF = true;
@@ -571,24 +509,24 @@ export class PLCParser extends Parser {
 							this._errHandler.reportMatch(this);
 							this.consume();
 						}
-						this.state = 116;
-						this.expression(8);
+						this.state = 82;
+						this.expression(10);
 						}
 						break;
 
 					case 2:
 						{
-						_localctx = new ExpressionContext(_parentctx, _parentState);
+						_localctx = new AddSubExprContext(new ExpressionContext(_parentctx, _parentState));
 						this.pushNewRecursionContext(_localctx, _startState, PLCParser.RULE_expression);
-						this.state = 117;
-						if (!(this.precpred(this._ctx, 6))) {
-							throw this.createFailedPredicateException("this.precpred(this._ctx, 6)");
+						this.state = 83;
+						if (!(this.precpred(this._ctx, 8))) {
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 8)");
 						}
-						this.state = 118;
-						_localctx._op = this._input.LT(1);
+						this.state = 84;
+						(_localctx as AddSubExprContext)._op = this._input.LT(1);
 						_la = this._input.LA(1);
-						if (!(_la === PLCParser.T__14 || _la === PLCParser.T__15)) {
-							_localctx._op = this._errHandler.recoverInline(this);
+						if (!(_la === PLCParser.T__12 || _la === PLCParser.T__13)) {
+							(_localctx as AddSubExprContext)._op = this._errHandler.recoverInline(this);
 						} else {
 							if (this._input.LA(1) === Token.EOF) {
 								this.matchedEOF = true;
@@ -597,16 +535,68 @@ export class PLCParser extends Parser {
 							this._errHandler.reportMatch(this);
 							this.consume();
 						}
-						this.state = 119;
+						this.state = 85;
+						this.expression(9);
+						}
+						break;
+
+					case 3:
+						{
+						_localctx = new ComparisonExprContext(new ExpressionContext(_parentctx, _parentState));
+						this.pushNewRecursionContext(_localctx, _startState, PLCParser.RULE_expression);
+						this.state = 86;
+						if (!(this.precpred(this._ctx, 7))) {
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 7)");
+						}
+						this.state = 87;
+						(_localctx as ComparisonExprContext)._op = this._input.LT(1);
+						_la = this._input.LA(1);
+						if (!((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << PLCParser.T__14) | (1 << PLCParser.T__15) | (1 << PLCParser.T__16) | (1 << PLCParser.T__17) | (1 << PLCParser.T__18) | (1 << PLCParser.T__19))) !== 0))) {
+							(_localctx as ComparisonExprContext)._op = this._errHandler.recoverInline(this);
+						} else {
+							if (this._input.LA(1) === Token.EOF) {
+								this.matchedEOF = true;
+							}
+
+							this._errHandler.reportMatch(this);
+							this.consume();
+						}
+						this.state = 88;
+						this.expression(8);
+						}
+						break;
+
+					case 4:
+						{
+						_localctx = new LogicalExprContext(new ExpressionContext(_parentctx, _parentState));
+						this.pushNewRecursionContext(_localctx, _startState, PLCParser.RULE_expression);
+						this.state = 89;
+						if (!(this.precpred(this._ctx, 6))) {
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 6)");
+						}
+						this.state = 90;
+						(_localctx as LogicalExprContext)._op = this._input.LT(1);
+						_la = this._input.LA(1);
+						if (!(_la === PLCParser.T__20 || _la === PLCParser.T__21)) {
+							(_localctx as LogicalExprContext)._op = this._errHandler.recoverInline(this);
+						} else {
+							if (this._input.LA(1) === Token.EOF) {
+								this.matchedEOF = true;
+							}
+
+							this._errHandler.reportMatch(this);
+							this.consume();
+						}
+						this.state = 91;
 						this.expression(7);
 						}
 						break;
 					}
 					}
 				}
-				this.state = 124;
+				this.state = 96;
 				this._errHandler.sync(this);
-				_alt = this.interpreter.adaptivePredict(this._input, 12, this._ctx);
+				_alt = this.interpreter.adaptivePredict(this._input, 6, this._ctx);
 			}
 			}
 		}
@@ -632,9 +622,9 @@ export class PLCParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 125;
+			this.state = 97;
 			_la = this._input.LA(1);
-			if (!((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << PLCParser.T__16) | (1 << PLCParser.T__17) | (1 << PLCParser.T__18))) !== 0))) {
+			if (!(_la === PLCParser.T__23 || _la === PLCParser.T__24)) {
 			this._errHandler.recoverInline(this);
 			} else {
 				if (this._input.LA(1) === Token.EOF) {
@@ -671,67 +661,62 @@ export class PLCParser extends Parser {
 	private expression_sempred(_localctx: ExpressionContext, predIndex: number): boolean {
 		switch (predIndex) {
 		case 0:
-			return this.precpred(this._ctx, 7);
+			return this.precpred(this._ctx, 9);
 
 		case 1:
+			return this.precpred(this._ctx, 8);
+
+		case 2:
+			return this.precpred(this._ctx, 7);
+
+		case 3:
 			return this.precpred(this._ctx, 6);
 		}
 		return true;
 	}
 
 	public static readonly _serializedATN: string =
-		"\x03\uC91D\uCABA\u058D\uAFBA\u4F53\u0607\uEA8B\uC241\x03\x1C\x82\x04\x02" +
+		"\x03\uC91D\uCABA\u058D\uAFBA\u4F53\u0607\uEA8B\uC241\x03\x1Ff\x04\x02" +
 		"\t\x02\x04\x03\t\x03\x04\x04\t\x04\x04\x05\t\x05\x04\x06\t\x06\x04\x07" +
-		"\t\x07\x04\b\t\b\x04\t\t\t\x04\n\t\n\x03\x02\x03\x02\x03\x02\x07\x02\x18" +
-		"\n\x02\f\x02\x0E\x02\x1B\v\x02\x03\x02\x03\x02\x03\x03\x03\x03\x03\x03" +
-		"\x03\x03\x03\x03\x05\x03$\n\x03\x03\x04\x03\x04\x03\x04\x03\x04\x03\x05" +
-		"\x03\x05\x03\x05\x03\x05\x05\x05.\n\x05\x03\x05\x03\x05\x05\x052\n\x05" +
-		"\x03\x06\x03\x06\x03\x06\x03\x06\x03\x06\x07\x069\n\x06\f\x06\x0E\x06" +
-		"<\v\x06\x05\x06>\n\x06\x03\x06\x03\x06\x03\x07\x03\x07\x03\x07\x03\x07" +
-		"\x03\x07\x03\x07\x03\x07\x07\x07I\n\x07\f\x07\x0E\x07L\v\x07\x03\x07\x03" +
-		"\x07\x03\x07\x03\x07\x03\x07\x07\x07S\n\x07\f\x07\x0E\x07V\v\x07\x05\x07" +
-		"X\n\x07\x03\x07\x03\x07\x03\b\x03\b\x03\b\x03\b\x03\b\x03\b\x03\b\x07" +
-		"\bc\n\b\f\b\x0E\bf\v\b\x03\b\x03\b\x03\t\x03\t\x03\t\x03\t\x03\t\x03\t" +
-		"\x03\t\x03\t\x03\t\x05\ts\n\t\x03\t\x03\t\x03\t\x03\t\x03\t\x03\t\x07" +
-		"\t{\n\t\f\t\x0E\t~\v\t\x03\n\x03\n\x03\n\x02\x02\x03\x10\v\x02\x02\x04" +
-		"\x02\x06\x02\b\x02\n\x02\f\x02\x0E\x02\x10\x02\x12\x02\x02\x05\x03\x02" +
-		"\x0F\x10\x03\x02\x11\x12\x03\x02\x13\x15\x02\x8B\x02\x19\x03\x02\x02\x02" +
-		"\x04#\x03\x02\x02\x02\x06%\x03\x02\x02\x02\b)\x03\x02\x02\x02\n3\x03\x02" +
-		"\x02\x02\fA\x03\x02\x02\x02\x0E[\x03\x02\x02\x02\x10r\x03\x02\x02\x02" +
-		"\x12\x7F\x03\x02\x02\x02\x14\x15\x05\x04\x03\x02\x15\x16\x07\x1B\x02\x02" +
-		"\x16\x18\x03\x02\x02\x02\x17\x14\x03\x02\x02\x02\x18\x1B\x03\x02\x02\x02" +
-		"\x19\x17\x03\x02\x02\x02\x19\x1A\x03\x02\x02\x02\x1A\x1C\x03\x02\x02\x02" +
-		"\x1B\x19\x03\x02\x02\x02\x1C\x1D\x07\x02\x02\x03\x1D\x03\x03\x02\x02\x02" +
-		"\x1E$\x05\x06\x04\x02\x1F$\x05\b\x05\x02 $\x05\n\x06\x02!$\x05\f\x07\x02" +
-		"\"$\x05\x0E\b\x02#\x1E\x03\x02\x02\x02#\x1F\x03\x02\x02\x02# \x03\x02" +
-		"\x02\x02#!\x03\x02\x02\x02#\"\x03\x02\x02\x02$\x05\x03\x02\x02\x02%&\x07" +
-		"\x16\x02\x02&\'\x07\x03\x02\x02\'(\x05\x10\t\x02(\x07\x03\x02\x02\x02" +
-		")*\x07\x04\x02\x02*-\x07\x16\x02\x02+,\x07\x05\x02\x02,.\x05\x12\n\x02" +
-		"-+\x03\x02\x02\x02-.\x03\x02\x02\x02.1\x03\x02\x02\x02/0\x07\x03\x02\x02" +
-		"02\x05\x10\t\x021/\x03\x02\x02\x0212\x03\x02\x02\x022\t\x03\x02\x02\x02" +
-		"34\x07\x16\x02\x024=\x07\x06\x02\x025:\x05\x10\t\x0267\x07\x07\x02\x02" +
-		"79\x05\x10\t\x0286\x03\x02\x02\x029<\x03\x02\x02\x02:8\x03\x02\x02\x02" +
-		":;\x03\x02\x02\x02;>\x03\x02\x02\x02<:\x03\x02\x02\x02=5\x03\x02\x02\x02" +
-		"=>\x03\x02\x02\x02>?\x03\x02\x02\x02?@\x07\b\x02\x02@\v\x03\x02\x02\x02" +
-		"AB\x07\t\x02\x02BC\x05\x10\t\x02CD\x07\n\x02\x02DJ\x07\x1B\x02\x02EF\x05" +
-		"\x04\x03\x02FG\x07\x1B\x02\x02GI\x03\x02\x02\x02HE\x03\x02\x02\x02IL\x03" +
-		"\x02\x02\x02JH\x03\x02\x02\x02JK\x03\x02\x02\x02KW\x03\x02\x02\x02LJ\x03" +
-		"\x02\x02\x02MN\x07\v\x02\x02NT\x07\x1B\x02\x02OP\x05\x04\x03\x02PQ\x07" +
-		"\x1B\x02\x02QS\x03\x02\x02\x02RO\x03\x02\x02\x02SV\x03\x02\x02\x02TR\x03" +
-		"\x02\x02\x02TU\x03\x02\x02\x02UX\x03\x02\x02\x02VT\x03\x02\x02\x02WM\x03" +
-		"\x02\x02\x02WX\x03\x02\x02\x02XY\x03\x02\x02\x02YZ\x07\f\x02\x02Z\r\x03" +
-		"\x02\x02\x02[\\\x07\r\x02\x02\\]\x05\x10\t\x02]^\x07\x0E\x02\x02^d\x07" +
-		"\x1B\x02\x02_`\x05\x04\x03\x02`a\x07\x1B\x02\x02ac\x03\x02\x02\x02b_\x03" +
-		"\x02\x02\x02cf\x03\x02\x02\x02db\x03\x02\x02\x02de\x03\x02\x02\x02eg\x03" +
-		"\x02\x02\x02fd\x03\x02\x02\x02gh\x07\f\x02\x02h\x0F\x03\x02\x02\x02ij" +
-		"\b\t\x01\x02jk\x07\x06\x02\x02kl\x05\x10\t\x02lm\x07\b\x02\x02ms\x03\x02" +
-		"\x02\x02ns\x07\x17\x02\x02os\x07\x18\x02\x02ps\x07\x19\x02\x02qs\x07\x16" +
-		"\x02\x02ri\x03\x02\x02\x02rn\x03\x02\x02\x02ro\x03\x02\x02\x02rp\x03\x02" +
-		"\x02\x02rq\x03\x02\x02\x02s|\x03\x02\x02\x02tu\f\t\x02\x02uv\t\x02\x02" +
-		"\x02v{\x05\x10\t\nwx\f\b\x02\x02xy\t\x03\x02\x02y{\x05\x10\t\tzt\x03\x02" +
-		"\x02\x02zw\x03\x02\x02\x02{~\x03\x02\x02\x02|z\x03\x02\x02\x02|}\x03\x02" +
-		"\x02\x02}\x11\x03\x02\x02\x02~|\x03\x02\x02\x02\x7F\x80\t\x04\x02\x02" +
-		"\x80\x13\x03\x02\x02\x02\x0F\x19#-1:=JTWdrz|";
+		"\t\x07\x04\b\t\b\x04\t\t\t\x04\n\t\n\x03\x02\x07\x02\x16\n\x02\f\x02\x0E" +
+		"\x02\x19\v\x02\x03\x02\x03\x02\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03" +
+		"\x05\x03\"\n\x03\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04" +
+		"\x03\x05\x03\x05\x03\x05\x03\x05\x03\x06\x03\x06\x03\x06\x03\x06\x03\x06" +
+		"\x03\x06\x03\x06\x05\x066\n\x06\x03\x07\x03\x07\x03\x07\x03\x07\x03\x07" +
+		"\x03\x07\x03\b\x03\b\x07\b@\n\b\f\b\x0E\bC\v\b\x03\b\x03\b\x03\t\x03\t" +
+		"\x03\t\x03\t\x03\t\x03\t\x03\t\x03\t\x03\t\x03\t\x05\tQ\n\t\x03\t\x03" +
+		"\t\x03\t\x03\t\x03\t\x03\t\x03\t\x03\t\x03\t\x03\t\x03\t\x03\t\x07\t_" +
+		"\n\t\f\t\x0E\tb\v\t\x03\n\x03\n\x03\n\x02\x02\x03\x10\v\x02\x02\x04\x02" +
+		"\x06\x02\b\x02\n\x02\f\x02\x0E\x02\x10\x02\x12\x02\x02\x07\x03\x02\r\x0E" +
+		"\x03\x02\x0F\x10\x03\x02\x11\x16\x03\x02\x17\x18\x03\x02\x1A\x1B\x02k" +
+		"\x02\x17\x03\x02\x02\x02\x04!\x03\x02\x02\x02\x06#\x03\x02\x02\x02\b*" +
+		"\x03\x02\x02\x02\n.\x03\x02\x02\x02\f7\x03\x02\x02\x02\x0E=\x03\x02\x02" +
+		"\x02\x10P\x03\x02\x02\x02\x12c\x03\x02\x02\x02\x14\x16\x05\x04\x03\x02" +
+		"\x15\x14\x03\x02\x02\x02\x16\x19\x03\x02\x02\x02\x17\x15\x03\x02\x02\x02" +
+		"\x17\x18\x03\x02\x02\x02\x18\x1A\x03\x02\x02\x02\x19\x17\x03\x02\x02\x02" +
+		"\x1A\x1B\x07\x02\x02\x03\x1B\x03\x03\x02\x02\x02\x1C\"\x05\x06\x04\x02" +
+		"\x1D\"\x05\b\x05\x02\x1E\"\x05\n\x06\x02\x1F\"\x05\f\x07\x02 \"\x05\x0E" +
+		"\b\x02!\x1C\x03\x02\x02\x02!\x1D\x03\x02\x02\x02!\x1E\x03\x02\x02\x02" +
+		"!\x1F\x03\x02\x02\x02! \x03\x02\x02\x02\"\x05\x03\x02\x02\x02#$\x07\x03" +
+		"\x02\x02$%\x07\x1E\x02\x02%&\x07\x04\x02\x02&\'\x05\x12\n\x02\'(\x07\x05" +
+		"\x02\x02()\x05\x10\t\x02)\x07\x03\x02\x02\x02*+\x07\x1E\x02\x02+,\x07" +
+		"\x05\x02\x02,-\x05\x10\t\x02-\t\x03\x02\x02\x02./\x07\x06\x02\x02/0\x07" +
+		"\x07\x02\x0201\x05\x10\t\x0212\x07\b\x02\x0225\x05\x0E\b\x0234\x07\t\x02" +
+		"\x0246\x05\x0E\b\x0253\x03\x02\x02\x0256\x03\x02\x02\x026\v\x03\x02\x02" +
+		"\x0278\x07\n\x02\x0289\x07\x07\x02\x029:\x05\x10\t\x02:;\x07\b\x02\x02" +
+		";<\x05\x0E\b\x02<\r\x03\x02\x02\x02=A\x07\v\x02\x02>@\x05\x04\x03\x02" +
+		"?>\x03\x02\x02\x02@C\x03\x02\x02\x02A?\x03\x02\x02\x02AB\x03\x02\x02\x02" +
+		"BD\x03\x02\x02\x02CA\x03\x02\x02\x02DE\x07\f\x02\x02E\x0F\x03\x02\x02" +
+		"\x02FG\b\t\x01\x02GH\x07\x19\x02\x02HQ\x05\x10\t\x07IJ\x07\x07\x02\x02" +
+		"JK\x05\x10\t\x02KL\x07\b\x02\x02LQ\x03\x02\x02\x02MQ\x07\x1C\x02\x02N" +
+		"Q\x07\x1D\x02\x02OQ\x07\x1E\x02\x02PF\x03\x02\x02\x02PI\x03\x02\x02\x02" +
+		"PM\x03\x02\x02\x02PN\x03\x02\x02\x02PO\x03\x02\x02\x02Q`\x03\x02\x02\x02" +
+		"RS\f\v\x02\x02ST\t\x02\x02\x02T_\x05\x10\t\fUV\f\n\x02\x02VW\t\x03\x02" +
+		"\x02W_\x05\x10\t\vXY\f\t\x02\x02YZ\t\x04\x02\x02Z_\x05\x10\t\n[\\\f\b" +
+		"\x02\x02\\]\t\x05\x02\x02]_\x05\x10\t\t^R\x03\x02\x02\x02^U\x03\x02\x02" +
+		"\x02^X\x03\x02\x02\x02^[\x03\x02\x02\x02_b\x03\x02\x02\x02`^\x03\x02\x02" +
+		"\x02`a\x03\x02\x02\x02a\x11\x03\x02\x02\x02b`\x03\x02\x02\x02cd\t\x06" +
+		"\x02\x02d\x13\x03\x02\x02\x02\t\x17!5AP^`";
 	public static __ATN: ATN;
 	public static get _ATN(): ATN {
 		if (!PLCParser.__ATN) {
@@ -752,15 +737,6 @@ export class ProgramContext extends ParserRuleContext {
 			return this.getRuleContexts(StatementContext);
 		} else {
 			return this.getRuleContext(i, StatementContext);
-		}
-	}
-	public NEWLINE(): TerminalNode[];
-	public NEWLINE(i: number): TerminalNode;
-	public NEWLINE(i?: number): TerminalNode | TerminalNode[] {
-		if (i === undefined) {
-			return this.getTokens(PLCParser.NEWLINE);
-		} else {
-			return this.getToken(PLCParser.NEWLINE, i);
 		}
 	}
 	constructor(parent: ParserRuleContext | undefined, invokingState: number) {
@@ -792,20 +768,20 @@ export class ProgramContext extends ParserRuleContext {
 
 
 export class StatementContext extends ParserRuleContext {
+	public variableDeclaration(): VariableDeclarationContext | undefined {
+		return this.tryGetRuleContext(0, VariableDeclarationContext);
+	}
 	public assignment(): AssignmentContext | undefined {
 		return this.tryGetRuleContext(0, AssignmentContext);
-	}
-	public declaration(): DeclarationContext | undefined {
-		return this.tryGetRuleContext(0, DeclarationContext);
-	}
-	public functionCall(): FunctionCallContext | undefined {
-		return this.tryGetRuleContext(0, FunctionCallContext);
 	}
 	public ifStatement(): IfStatementContext | undefined {
 		return this.tryGetRuleContext(0, IfStatementContext);
 	}
 	public whileStatement(): WhileStatementContext | undefined {
 		return this.tryGetRuleContext(0, WhileStatementContext);
+	}
+	public block(): BlockContext | undefined {
+		return this.tryGetRuleContext(0, BlockContext);
 	}
 	constructor(parent: ParserRuleContext | undefined, invokingState: number) {
 		super(parent, invokingState);
@@ -835,8 +811,44 @@ export class StatementContext extends ParserRuleContext {
 }
 
 
+export class VariableDeclarationContext extends ParserRuleContext {
+	public IDENTIFIER(): TerminalNode { return this.getToken(PLCParser.IDENTIFIER, 0); }
+	public type(): TypeContext {
+		return this.getRuleContext(0, TypeContext);
+	}
+	public expression(): ExpressionContext {
+		return this.getRuleContext(0, ExpressionContext);
+	}
+	constructor(parent: ParserRuleContext | undefined, invokingState: number) {
+		super(parent, invokingState);
+	}
+	// @Override
+	public get ruleIndex(): number { return PLCParser.RULE_variableDeclaration; }
+	// @Override
+	public enterRule(listener: PLCListener): void {
+		if (listener.enterVariableDeclaration) {
+			listener.enterVariableDeclaration(this);
+		}
+	}
+	// @Override
+	public exitRule(listener: PLCListener): void {
+		if (listener.exitVariableDeclaration) {
+			listener.exitVariableDeclaration(this);
+		}
+	}
+	// @Override
+	public accept<Result>(visitor: PLCVisitor<Result>): Result {
+		if (visitor.visitVariableDeclaration) {
+			return visitor.visitVariableDeclaration(this);
+		} else {
+			return visitor.visitChildren(this);
+		}
+	}
+}
+
+
 export class AssignmentContext extends ParserRuleContext {
-	public ID(): TerminalNode { return this.getToken(PLCParser.ID, 0); }
+	public IDENTIFIER(): TerminalNode { return this.getToken(PLCParser.IDENTIFIER, 0); }
 	public expression(): ExpressionContext {
 		return this.getRuleContext(0, ExpressionContext);
 	}
@@ -868,101 +880,17 @@ export class AssignmentContext extends ParserRuleContext {
 }
 
 
-export class DeclarationContext extends ParserRuleContext {
-	public ID(): TerminalNode { return this.getToken(PLCParser.ID, 0); }
-	public type(): TypeContext | undefined {
-		return this.tryGetRuleContext(0, TypeContext);
-	}
-	public expression(): ExpressionContext | undefined {
-		return this.tryGetRuleContext(0, ExpressionContext);
-	}
-	constructor(parent: ParserRuleContext | undefined, invokingState: number) {
-		super(parent, invokingState);
-	}
-	// @Override
-	public get ruleIndex(): number { return PLCParser.RULE_declaration; }
-	// @Override
-	public enterRule(listener: PLCListener): void {
-		if (listener.enterDeclaration) {
-			listener.enterDeclaration(this);
-		}
-	}
-	// @Override
-	public exitRule(listener: PLCListener): void {
-		if (listener.exitDeclaration) {
-			listener.exitDeclaration(this);
-		}
-	}
-	// @Override
-	public accept<Result>(visitor: PLCVisitor<Result>): Result {
-		if (visitor.visitDeclaration) {
-			return visitor.visitDeclaration(this);
-		} else {
-			return visitor.visitChildren(this);
-		}
-	}
-}
-
-
-export class FunctionCallContext extends ParserRuleContext {
-	public ID(): TerminalNode { return this.getToken(PLCParser.ID, 0); }
-	public expression(): ExpressionContext[];
-	public expression(i: number): ExpressionContext;
-	public expression(i?: number): ExpressionContext | ExpressionContext[] {
-		if (i === undefined) {
-			return this.getRuleContexts(ExpressionContext);
-		} else {
-			return this.getRuleContext(i, ExpressionContext);
-		}
-	}
-	constructor(parent: ParserRuleContext | undefined, invokingState: number) {
-		super(parent, invokingState);
-	}
-	// @Override
-	public get ruleIndex(): number { return PLCParser.RULE_functionCall; }
-	// @Override
-	public enterRule(listener: PLCListener): void {
-		if (listener.enterFunctionCall) {
-			listener.enterFunctionCall(this);
-		}
-	}
-	// @Override
-	public exitRule(listener: PLCListener): void {
-		if (listener.exitFunctionCall) {
-			listener.exitFunctionCall(this);
-		}
-	}
-	// @Override
-	public accept<Result>(visitor: PLCVisitor<Result>): Result {
-		if (visitor.visitFunctionCall) {
-			return visitor.visitFunctionCall(this);
-		} else {
-			return visitor.visitChildren(this);
-		}
-	}
-}
-
-
 export class IfStatementContext extends ParserRuleContext {
 	public expression(): ExpressionContext {
 		return this.getRuleContext(0, ExpressionContext);
 	}
-	public NEWLINE(): TerminalNode[];
-	public NEWLINE(i: number): TerminalNode;
-	public NEWLINE(i?: number): TerminalNode | TerminalNode[] {
+	public block(): BlockContext[];
+	public block(i: number): BlockContext;
+	public block(i?: number): BlockContext | BlockContext[] {
 		if (i === undefined) {
-			return this.getTokens(PLCParser.NEWLINE);
+			return this.getRuleContexts(BlockContext);
 		} else {
-			return this.getToken(PLCParser.NEWLINE, i);
-		}
-	}
-	public statement(): StatementContext[];
-	public statement(i: number): StatementContext;
-	public statement(i?: number): StatementContext | StatementContext[] {
-		if (i === undefined) {
-			return this.getRuleContexts(StatementContext);
-		} else {
-			return this.getRuleContext(i, StatementContext);
+			return this.getRuleContext(i, BlockContext);
 		}
 	}
 	constructor(parent: ParserRuleContext | undefined, invokingState: number) {
@@ -997,23 +925,8 @@ export class WhileStatementContext extends ParserRuleContext {
 	public expression(): ExpressionContext {
 		return this.getRuleContext(0, ExpressionContext);
 	}
-	public NEWLINE(): TerminalNode[];
-	public NEWLINE(i: number): TerminalNode;
-	public NEWLINE(i?: number): TerminalNode | TerminalNode[] {
-		if (i === undefined) {
-			return this.getTokens(PLCParser.NEWLINE);
-		} else {
-			return this.getToken(PLCParser.NEWLINE, i);
-		}
-	}
-	public statement(): StatementContext[];
-	public statement(i: number): StatementContext;
-	public statement(i?: number): StatementContext | StatementContext[] {
-		if (i === undefined) {
-			return this.getRuleContexts(StatementContext);
-		} else {
-			return this.getRuleContext(i, StatementContext);
-		}
+	public block(): BlockContext {
+		return this.getRuleContext(0, BlockContext);
 	}
 	constructor(parent: ParserRuleContext | undefined, invokingState: number) {
 		super(parent, invokingState);
@@ -1043,7 +956,55 @@ export class WhileStatementContext extends ParserRuleContext {
 }
 
 
+export class BlockContext extends ParserRuleContext {
+	public statement(): StatementContext[];
+	public statement(i: number): StatementContext;
+	public statement(i?: number): StatementContext | StatementContext[] {
+		if (i === undefined) {
+			return this.getRuleContexts(StatementContext);
+		} else {
+			return this.getRuleContext(i, StatementContext);
+		}
+	}
+	constructor(parent: ParserRuleContext | undefined, invokingState: number) {
+		super(parent, invokingState);
+	}
+	// @Override
+	public get ruleIndex(): number { return PLCParser.RULE_block; }
+	// @Override
+	public enterRule(listener: PLCListener): void {
+		if (listener.enterBlock) {
+			listener.enterBlock(this);
+		}
+	}
+	// @Override
+	public exitRule(listener: PLCListener): void {
+		if (listener.exitBlock) {
+			listener.exitBlock(this);
+		}
+	}
+	// @Override
+	public accept<Result>(visitor: PLCVisitor<Result>): Result {
+		if (visitor.visitBlock) {
+			return visitor.visitBlock(this);
+		} else {
+			return visitor.visitChildren(this);
+		}
+	}
+}
+
+
 export class ExpressionContext extends ParserRuleContext {
+	constructor(parent: ParserRuleContext | undefined, invokingState: number) {
+		super(parent, invokingState);
+	}
+	// @Override
+	public get ruleIndex(): number { return PLCParser.RULE_expression; }
+	public copyFrom(ctx: ExpressionContext): void {
+		super.copyFrom(ctx);
+	}
+}
+export class MulDivExprContext extends ExpressionContext {
 	public _op!: Token;
 	public expression(): ExpressionContext[];
 	public expression(i: number): ExpressionContext;
@@ -1054,31 +1015,273 @@ export class ExpressionContext extends ParserRuleContext {
 			return this.getRuleContext(i, ExpressionContext);
 		}
 	}
-	public INT(): TerminalNode | undefined { return this.tryGetToken(PLCParser.INT, 0); }
-	public FLOAT(): TerminalNode | undefined { return this.tryGetToken(PLCParser.FLOAT, 0); }
-	public BOOL(): TerminalNode | undefined { return this.tryGetToken(PLCParser.BOOL, 0); }
-	public ID(): TerminalNode | undefined { return this.tryGetToken(PLCParser.ID, 0); }
-	constructor(parent: ParserRuleContext | undefined, invokingState: number) {
-		super(parent, invokingState);
+	constructor(ctx: ExpressionContext) {
+		super(ctx.parent, ctx.invokingState);
+		this.copyFrom(ctx);
 	}
 	// @Override
-	public get ruleIndex(): number { return PLCParser.RULE_expression; }
-	// @Override
 	public enterRule(listener: PLCListener): void {
-		if (listener.enterExpression) {
-			listener.enterExpression(this);
+		if (listener.enterMulDivExpr) {
+			listener.enterMulDivExpr(this);
 		}
 	}
 	// @Override
 	public exitRule(listener: PLCListener): void {
-		if (listener.exitExpression) {
-			listener.exitExpression(this);
+		if (listener.exitMulDivExpr) {
+			listener.exitMulDivExpr(this);
 		}
 	}
 	// @Override
 	public accept<Result>(visitor: PLCVisitor<Result>): Result {
-		if (visitor.visitExpression) {
-			return visitor.visitExpression(this);
+		if (visitor.visitMulDivExpr) {
+			return visitor.visitMulDivExpr(this);
+		} else {
+			return visitor.visitChildren(this);
+		}
+	}
+}
+export class AddSubExprContext extends ExpressionContext {
+	public _op!: Token;
+	public expression(): ExpressionContext[];
+	public expression(i: number): ExpressionContext;
+	public expression(i?: number): ExpressionContext | ExpressionContext[] {
+		if (i === undefined) {
+			return this.getRuleContexts(ExpressionContext);
+		} else {
+			return this.getRuleContext(i, ExpressionContext);
+		}
+	}
+	constructor(ctx: ExpressionContext) {
+		super(ctx.parent, ctx.invokingState);
+		this.copyFrom(ctx);
+	}
+	// @Override
+	public enterRule(listener: PLCListener): void {
+		if (listener.enterAddSubExpr) {
+			listener.enterAddSubExpr(this);
+		}
+	}
+	// @Override
+	public exitRule(listener: PLCListener): void {
+		if (listener.exitAddSubExpr) {
+			listener.exitAddSubExpr(this);
+		}
+	}
+	// @Override
+	public accept<Result>(visitor: PLCVisitor<Result>): Result {
+		if (visitor.visitAddSubExpr) {
+			return visitor.visitAddSubExpr(this);
+		} else {
+			return visitor.visitChildren(this);
+		}
+	}
+}
+export class ComparisonExprContext extends ExpressionContext {
+	public _op!: Token;
+	public expression(): ExpressionContext[];
+	public expression(i: number): ExpressionContext;
+	public expression(i?: number): ExpressionContext | ExpressionContext[] {
+		if (i === undefined) {
+			return this.getRuleContexts(ExpressionContext);
+		} else {
+			return this.getRuleContext(i, ExpressionContext);
+		}
+	}
+	constructor(ctx: ExpressionContext) {
+		super(ctx.parent, ctx.invokingState);
+		this.copyFrom(ctx);
+	}
+	// @Override
+	public enterRule(listener: PLCListener): void {
+		if (listener.enterComparisonExpr) {
+			listener.enterComparisonExpr(this);
+		}
+	}
+	// @Override
+	public exitRule(listener: PLCListener): void {
+		if (listener.exitComparisonExpr) {
+			listener.exitComparisonExpr(this);
+		}
+	}
+	// @Override
+	public accept<Result>(visitor: PLCVisitor<Result>): Result {
+		if (visitor.visitComparisonExpr) {
+			return visitor.visitComparisonExpr(this);
+		} else {
+			return visitor.visitChildren(this);
+		}
+	}
+}
+export class LogicalExprContext extends ExpressionContext {
+	public _op!: Token;
+	public expression(): ExpressionContext[];
+	public expression(i: number): ExpressionContext;
+	public expression(i?: number): ExpressionContext | ExpressionContext[] {
+		if (i === undefined) {
+			return this.getRuleContexts(ExpressionContext);
+		} else {
+			return this.getRuleContext(i, ExpressionContext);
+		}
+	}
+	constructor(ctx: ExpressionContext) {
+		super(ctx.parent, ctx.invokingState);
+		this.copyFrom(ctx);
+	}
+	// @Override
+	public enterRule(listener: PLCListener): void {
+		if (listener.enterLogicalExpr) {
+			listener.enterLogicalExpr(this);
+		}
+	}
+	// @Override
+	public exitRule(listener: PLCListener): void {
+		if (listener.exitLogicalExpr) {
+			listener.exitLogicalExpr(this);
+		}
+	}
+	// @Override
+	public accept<Result>(visitor: PLCVisitor<Result>): Result {
+		if (visitor.visitLogicalExpr) {
+			return visitor.visitLogicalExpr(this);
+		} else {
+			return visitor.visitChildren(this);
+		}
+	}
+}
+export class NotExprContext extends ExpressionContext {
+	public expression(): ExpressionContext {
+		return this.getRuleContext(0, ExpressionContext);
+	}
+	constructor(ctx: ExpressionContext) {
+		super(ctx.parent, ctx.invokingState);
+		this.copyFrom(ctx);
+	}
+	// @Override
+	public enterRule(listener: PLCListener): void {
+		if (listener.enterNotExpr) {
+			listener.enterNotExpr(this);
+		}
+	}
+	// @Override
+	public exitRule(listener: PLCListener): void {
+		if (listener.exitNotExpr) {
+			listener.exitNotExpr(this);
+		}
+	}
+	// @Override
+	public accept<Result>(visitor: PLCVisitor<Result>): Result {
+		if (visitor.visitNotExpr) {
+			return visitor.visitNotExpr(this);
+		} else {
+			return visitor.visitChildren(this);
+		}
+	}
+}
+export class ParenExprContext extends ExpressionContext {
+	public expression(): ExpressionContext {
+		return this.getRuleContext(0, ExpressionContext);
+	}
+	constructor(ctx: ExpressionContext) {
+		super(ctx.parent, ctx.invokingState);
+		this.copyFrom(ctx);
+	}
+	// @Override
+	public enterRule(listener: PLCListener): void {
+		if (listener.enterParenExpr) {
+			listener.enterParenExpr(this);
+		}
+	}
+	// @Override
+	public exitRule(listener: PLCListener): void {
+		if (listener.exitParenExpr) {
+			listener.exitParenExpr(this);
+		}
+	}
+	// @Override
+	public accept<Result>(visitor: PLCVisitor<Result>): Result {
+		if (visitor.visitParenExpr) {
+			return visitor.visitParenExpr(this);
+		} else {
+			return visitor.visitChildren(this);
+		}
+	}
+}
+export class BooleanLiteralContext extends ExpressionContext {
+	public BOOLEAN(): TerminalNode { return this.getToken(PLCParser.BOOLEAN, 0); }
+	constructor(ctx: ExpressionContext) {
+		super(ctx.parent, ctx.invokingState);
+		this.copyFrom(ctx);
+	}
+	// @Override
+	public enterRule(listener: PLCListener): void {
+		if (listener.enterBooleanLiteral) {
+			listener.enterBooleanLiteral(this);
+		}
+	}
+	// @Override
+	public exitRule(listener: PLCListener): void {
+		if (listener.exitBooleanLiteral) {
+			listener.exitBooleanLiteral(this);
+		}
+	}
+	// @Override
+	public accept<Result>(visitor: PLCVisitor<Result>): Result {
+		if (visitor.visitBooleanLiteral) {
+			return visitor.visitBooleanLiteral(this);
+		} else {
+			return visitor.visitChildren(this);
+		}
+	}
+}
+export class IntLiteralContext extends ExpressionContext {
+	public INTEGER(): TerminalNode { return this.getToken(PLCParser.INTEGER, 0); }
+	constructor(ctx: ExpressionContext) {
+		super(ctx.parent, ctx.invokingState);
+		this.copyFrom(ctx);
+	}
+	// @Override
+	public enterRule(listener: PLCListener): void {
+		if (listener.enterIntLiteral) {
+			listener.enterIntLiteral(this);
+		}
+	}
+	// @Override
+	public exitRule(listener: PLCListener): void {
+		if (listener.exitIntLiteral) {
+			listener.exitIntLiteral(this);
+		}
+	}
+	// @Override
+	public accept<Result>(visitor: PLCVisitor<Result>): Result {
+		if (visitor.visitIntLiteral) {
+			return visitor.visitIntLiteral(this);
+		} else {
+			return visitor.visitChildren(this);
+		}
+	}
+}
+export class IdentifierExprContext extends ExpressionContext {
+	public IDENTIFIER(): TerminalNode { return this.getToken(PLCParser.IDENTIFIER, 0); }
+	constructor(ctx: ExpressionContext) {
+		super(ctx.parent, ctx.invokingState);
+		this.copyFrom(ctx);
+	}
+	// @Override
+	public enterRule(listener: PLCListener): void {
+		if (listener.enterIdentifierExpr) {
+			listener.enterIdentifierExpr(this);
+		}
+	}
+	// @Override
+	public exitRule(listener: PLCListener): void {
+		if (listener.exitIdentifierExpr) {
+			listener.exitIdentifierExpr(this);
+		}
+	}
+	// @Override
+	public accept<Result>(visitor: PLCVisitor<Result>): Result {
+		if (visitor.visitIdentifierExpr) {
+			return visitor.visitIdentifierExpr(this);
 		} else {
 			return visitor.visitChildren(this);
 		}

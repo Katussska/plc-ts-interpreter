@@ -1,56 +1,51 @@
 grammar PLC;
 
-program: (statement NEWLINE)* EOF;
+program: statement* EOF;
 
 statement
-    : assignment
-    | declaration
-    | functionCall
+    : variableDeclaration
+    | assignment
     | ifStatement
     | whileStatement
+    | block
+    ;
+
+variableDeclaration
+    : 'let' IDENTIFIER ':' type '=' expression
     ;
 
 assignment
-    : ID '=' expression
-    ;
-
-declaration
-    : 'let' ID (':' type)? ('=' expression)?
-    ;
-
-functionCall
-    : ID '(' (expression (',' expression)*)? ')'
+    : IDENTIFIER '=' expression
     ;
 
 ifStatement
-    : 'if' expression 'then' NEWLINE (statement NEWLINE)* ('else' NEWLINE (statement NEWLINE)*)? 'end'
+    : 'if' '(' expression ')' block ('else' block)?
     ;
 
 whileStatement
-    : 'while' expression 'do' NEWLINE (statement NEWLINE)* 'end'
+    : 'while' '(' expression ')' block
+    ;
+
+block
+    : '{' statement* '}'
     ;
 
 expression
-    : expression op=('*'|'/') expression
-    | expression op=('+'|'-') expression
-    | '(' expression ')'
-    | INT
-    | FLOAT
-    | BOOL
-    | ID
+    : expression op=('*'|'/') expression     # MulDivExpr
+    | expression op=('+'|'-') expression     # AddSubExpr
+    | expression op=('=='|'!='|'<'|'>'|'<='|'>=') expression # ComparisonExpr
+    | expression op=('and'|'or') expression  # LogicalExpr
+    | 'not' expression                       # NotExpr
+    | '(' expression ')'                     # ParenExpr
+    | BOOLEAN                                # BooleanLiteral
+    | INTEGER                                # IntLiteral
+    | IDENTIFIER                             # IdentifierExpr
     ;
 
-type
-    : 'int' | 'float' | 'bool'
-    ;
+type: 'int' | 'bool';
 
-// Tokens
+BOOLEAN: 'true' | 'false';
+INTEGER: [0-9]+;
+IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]*;
 
-ID: [a-zA-Z_][a-zA-Z0-9_]*;
-INT: [0-9]+;
-FLOAT: [0-9]+'.'[0-9]+;
-BOOL: 'true' | 'false';
-
-WS: [ \t]+ -> skip;
-NEWLINE: ('\r'? '\n')+;
-COMMENT: '#' ~[\r\n]* -> skip;
+WS: [ \t\r\n]+ -> skip;
