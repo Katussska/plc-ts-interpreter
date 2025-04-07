@@ -87,18 +87,25 @@ export class TypeChecker
     ctx.statement().forEach((stmt) => this.visit(stmt));
   }
 
-  visitIfStmt(ctx: PLCParser.IfStmtContext): void {
-    const condType = this.visit(ctx.expression()) as Type;
-    if (condType !== "bool") {
-      this.errors.push(
-        `Condition in 'if' must be of type bool, got ${condType}`
-      );
+  visitIfStmt(ctx: PLCParser.IfStmtContext): Type {
+    // Check that the condition is a boolean
+    const conditionType = this.visit(ctx.expression());
+    if (conditionType !== "bool") {
+      throw new Error(`If condition must be a boolean, got ${conditionType}`);
     }
 
-    this.visit(ctx.statement(0));
-    if (ctx.statement(1)) {
-      this.visit(ctx.statement(1));
+    // Check the statement(s) if they exist
+    const statements = ctx.statement();
+    if (statements && statements.length > 0) {
+      this.visit(statements[0]);
+
+      // Check if there's an else statement
+      if (statements.length > 1) {
+        this.visit(statements[1]);
+      }
     }
+
+    return "undefined";
   }
 
   visitWhileStmt(ctx: PLCParser.WhileStmtContext): void {
