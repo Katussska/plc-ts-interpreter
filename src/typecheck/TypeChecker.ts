@@ -11,8 +11,8 @@ interface VariableTable {
 }
 
 export class TypeChecker
-    extends AbstractParseTreeVisitor<Type | void>
-    implements PLCVisitor<Type | void>
+  extends AbstractParseTreeVisitor<Type | void>
+  implements PLCVisitor<Type | void>
 {
   private variables: VariableTable = {};
   public errors: string[] = [];
@@ -84,14 +84,14 @@ export class TypeChecker
   }
 
   visitBlock(ctx: PLCParser.BlockContext): void {
-    ctx.statement().forEach(stmt => this.visit(stmt));
+    ctx.statement().forEach((stmt) => this.visit(stmt));
   }
 
   visitIfStmt(ctx: PLCParser.IfStmtContext): void {
     const condType = this.visit(ctx.expression()) as Type;
     if (condType !== "bool") {
       this.errors.push(
-          `Condition in 'if' must be of type bool, got ${condType}`
+        `Condition in 'if' must be of type bool, got ${condType}`
       );
     }
 
@@ -105,7 +105,7 @@ export class TypeChecker
     const condType = this.visit(ctx.expression()) as Type;
     if (condType !== "bool") {
       this.errors.push(
-          `Condition in 'while' must be of type bool, got ${condType}`
+        `Condition in 'while' must be of type bool, got ${condType}`
       );
     }
 
@@ -120,11 +120,17 @@ export class TypeChecker
     if (!this.variables[varName]) {
       this.errors.push(`Variable '${varName}' not declared`);
       return "undefined";
-    } else if (this.variables[varName] !== exprType && exprType !== "undefined") {
-      this.errors.push(
+    }
+
+    // Check type compatibility for assignment
+    if (this.variables[varName] !== exprType && exprType !== "undefined") {
+      // Special case: Allow int to float conversion but not float to int
+      if (!(this.variables[varName] === "float" && exprType === "int")) {
+        this.errors.push(
           `Type mismatch in assignment to '${varName}': expected ${this.variables[varName]}, got ${exprType}`
-      );
-      return "undefined";
+        );
+        return "undefined";
+      }
     }
 
     return this.variables[varName];
@@ -138,7 +144,7 @@ export class TypeChecker
       return "string";
     } else {
       this.errors.push(
-          `Concatenation operator '.' requires string operands, got ${left} and ${right}`
+        `Concatenation operator '.' requires string operands, got ${left} and ${right}`
       );
       return "undefined";
     }
@@ -154,7 +160,23 @@ export class TypeChecker
       op = ctx.children[1].text; // The operator is the second child (index 1)
     }
 
-    if ((left === "int" || left === "float") && (right === "int" || right === "float")) {
+    // Special handling for modulo operator
+    if (op === "%") {
+      if (left === "int" && right === "int") {
+        return "int";
+      } else {
+        this.errors.push(
+          `Modulo operator '%' requires integer operands, got ${left} and ${right}`
+        );
+        return "undefined";
+      }
+    }
+
+    // For * and / operators
+    if (
+      (left === "int" || left === "float") &&
+      (right === "int" || right === "float")
+    ) {
       // If either operand is float, result is float
       if (left === "float" || right === "float") {
         return "float";
@@ -163,7 +185,7 @@ export class TypeChecker
       }
     } else {
       this.errors.push(
-          `Invalid operand types for ${op}: ${left} and ${right}, expected numeric types`
+        `Invalid operand types for ${op}: ${left} and ${right}, expected numeric types`
       );
       return "undefined";
     }
@@ -179,7 +201,10 @@ export class TypeChecker
       op = ctx.children[1].text; // The operator is the second child (index 1)
     }
 
-    if ((left === "int" || left === "float") && (right === "int" || right === "float")) {
+    if (
+      (left === "int" || left === "float") &&
+      (right === "int" || right === "float")
+    ) {
       // If either operand is float, result is float
       if (left === "float" || right === "float") {
         return "float";
@@ -188,7 +213,7 @@ export class TypeChecker
       }
     } else {
       this.errors.push(
-          `Invalid operand types for ${op}: ${left} and ${right}, expected numeric types`
+        `Invalid operand types for ${op}: ${left} and ${right}, expected numeric types`
       );
       return "undefined";
     }
@@ -204,11 +229,14 @@ export class TypeChecker
       op = ctx.children[1].text; // The operator is the second child (index 1)
     }
 
-    if ((left === "int" || left === "float") && (right === "int" || right === "float")) {
+    if (
+      (left === "int" || left === "float") &&
+      (right === "int" || right === "float")
+    ) {
       return "bool";
     } else {
       this.errors.push(
-          `Invalid operand types for comparison ${op}: ${left} and ${right}, expected numeric types`
+        `Invalid operand types for comparison ${op}: ${left} and ${right}, expected numeric types`
       );
       return "undefined";
     }
@@ -224,11 +252,17 @@ export class TypeChecker
       op = ctx.children[1].text; // The operator is the second child (index 1)
     }
 
-    if (left === right && left !== "undefined") {
+    // Allow comparisons between int and float
+    if (
+      (left === "int" || left === "float") &&
+      (right === "int" || right === "float")
+    ) {
+      return "bool";
+    } else if (left === right && left !== "undefined") {
       return "bool";
     } else {
       this.errors.push(
-          `Invalid operand types for equality check ${op}: ${left} and ${right}, they must be of the same type`
+        `Invalid operand types for equality check ${op}: ${left} and ${right}, they must be compatible types`
       );
       return "undefined";
     }
@@ -242,7 +276,7 @@ export class TypeChecker
       return "bool";
     } else {
       this.errors.push(
-          `Logical AND requires boolean operands, got ${left} and ${right}`
+        `Logical AND requires boolean operands, got ${left} and ${right}`
       );
       return "undefined";
     }
@@ -256,7 +290,7 @@ export class TypeChecker
       return "bool";
     } else {
       this.errors.push(
-          `Logical OR requires boolean operands, got ${left} and ${right}`
+        `Logical OR requires boolean operands, got ${left} and ${right}`
       );
       return "undefined";
     }
