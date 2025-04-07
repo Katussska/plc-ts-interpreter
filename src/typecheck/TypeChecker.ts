@@ -1,4 +1,5 @@
 import { AbstractParseTreeVisitor } from "antlr4ts/tree/AbstractParseTreeVisitor";
+import { ParseTree } from "antlr4ts/tree/ParseTree";
 import { PLCVisitor } from "../parser/src/grammar/PLCVisitor";
 import { ParserRuleContext } from "antlr4ts";
 import * as PLCParser from "../parser/src/grammar/PLCParser";
@@ -9,12 +10,13 @@ import {
   AssignmentContext,
   IfStatementContext,
   WhileStatementContext,
-  ExpressionContext,
-  BinaryExprContext, // Přidej tento import
-  ParenExprContext, // Přidej tento import
-  BooleanLiteralContext, // Přidej tento import
-  IntLiteralContext, // Přidej tento import
-  IdentifierExprContext, // Přidej tento import
+  BlockContext,
+  BinaryExprContext,
+  NotExprContext,
+  ParenExprContext,
+  BooleanLiteralContext,
+  IntLiteralContext,
+  IdentifierExprContext,
 } from "../parser/src/grammar/PLCParser";
 
 type Type = "int" | "bool" | "undefined";
@@ -24,8 +26,8 @@ interface VariableTable {
 }
 
 export class TypeChecker
-  extends AbstractParseTreeVisitor<Type | void>
-  implements PLCVisitor<Type | void>
+    extends AbstractParseTreeVisitor<Type | void>
+    implements PLCVisitor<Type | void>
 {
   private variables: VariableTable = {};
   public errors: string[] = [];
@@ -35,18 +37,27 @@ export class TypeChecker
   }
 
   visitProgram(ctx: ProgramContext): void {
-    for (const stmt of ctx.statement()) {
-      this.visit(stmt);
+    for (let i = 0; i < ctx.statement().length; i++) {
+      this.visit(ctx.statement(i));
     }
   }
 
   visitStatement(ctx: StatementContext): void {
-    if (ctx.assignment()) return this.visit(ctx.assignment()!) as void;
-    if (ctx.variableDeclaration())
-      return this.visit(ctx.variableDeclaration()!) as void;
-    if (ctx.ifStatement()) return this.visit(ctx.ifStatement()!) as void;
-    if (ctx.whileStatement()) return this.visit(ctx.whileStatement()!) as void;
-    if (ctx.block()) return this.visit(ctx.block()!) as void;
+    if (ctx.assignment()) {
+      this.visit(ctx.assignment()!);
+    } else if (ctx.variableDeclaration()) {
+      this.visit(ctx.variableDeclaration()!);
+    } else if (ctx.ifStatement()) {
+      this.visit(ctx.ifStatement()!);
+    } else if (ctx.whileStatement()) {
+      this.visit(ctx.whileStatement()!);
+    } else if (ctx.block()) {
+      this.visit(ctx.block()!);
+    }
+  }
+
+  visitBlock(ctx: BlockContext): void {
+    ctx.statement().forEach(stmt => this.visit(stmt));
   }
 
   visitVariableDeclaration(ctx: VariableDeclarationContext): void {
@@ -58,7 +69,7 @@ export class TypeChecker
       this.errors.push(`Variable '${varName}' already declared`);
     } else if (exprType !== typeText) {
       this.errors.push(
-        `Type mismatch in declaration of '${varName}': expected ${typeText}, got ${exprType}`
+          `Type mismatch in declaration of '${varName}': expected ${typeText}, got ${exprType}`
       );
     }
 
@@ -73,16 +84,16 @@ export class TypeChecker
       this.errors.push(`Variable '${varName}' not declared`);
     } else if (this.variables[varName] !== exprType) {
       this.errors.push(
-        `Type mismatch in assignment to '${varName}': expected ${this.variables[varName]}, got ${exprType}`
+          `Type mismatch in assignment to '${varName}': expected ${this.variables[varName]}, got ${exprType}`
       );
     }
   }
 
   visitIfStatement(ctx: IfStatementContext): void {
-    const condType = this.visit(ctx.expression());
+    const condType = this.visit(ctx.expression()) as Type;
     if (condType !== "bool") {
       this.errors.push(
-        `Condition in 'if' must be of type bool, got ${condType}`
+          `Condition in 'if' must be of type bool, got ${condType}`
       );
     }
 
@@ -93,81 +104,91 @@ export class TypeChecker
   }
 
   visitWhileStatement(ctx: WhileStatementContext): void {
-    const condType = this.visit(ctx.expression());
+    const condType = this.visit(ctx.expression()) as Type;
     if (condType !== "bool") {
       this.errors.push(
-        `Condition in 'while' must be of type bool, got ${condType}`
+          `Condition in 'while' must be of type bool, got ${condType}`
       );
     }
 
     this.visit(ctx.block());
   }
 
-  visitExpression(ctx: ExpressionContext): Type {
-    // Check if the context is for a boolean literal
-    if (ctx instanceof PLCParser.BooleanLiteralContext) return "bool";
-    // Check if the context is for an integer literal
-    if (ctx instanceof PLCParser.IntLiteralContext) return "int";
+  // Implementace jednotlivých typů výrazů
+  visitBinaryExpr(ctx: BinaryExprContext): Type {
+    const left = this.visit(ctx.expression(0)) as Type;
+    const right = this.visit(ctx.expression(1)) as Type;
+    const op = ctx._op?.text || "";  // Přidáme bezpečný přístup a fallback na prázdný řetězec
 
-    // Check if the context is for an identifier expression
-    if (ctx instanceof PLCParser.IdentifierExprContext) {
-      const name = ctx.IDENTIFIER().text;
-      const t = this.variables[name];
-      if (!t) {
-        this.errors.push(`Variable '${name}' not declared`);
-        return "undefined"; // Return a fallback type for error handling
-      }
-      return t;
-    }
+    const mathOperators = ["+", "-", "*", "/"];
+    const logicalOperators = ["and", "or"];
+    const comparisonOperators = ["==", "!=", "<", ">", "<=", ">="];
 
-    // Handle binary expressions (e.g., +, -, *, /, and, or, etc.)
-    if (ctx instanceof PLCParser.BinaryExprContext) {
-      const left = this.visit(ctx.expression(0));
-      const right = this.visit(ctx.expression(1));
-      const op = ctx._op.text;
-
-      // Handle arithmetic operators (+, -, *, /)
-      if (["+", "-", "*", "/"].includes(op)) {
-        if ((left === "int" || left === "bool") && left === right) {
-          return left;
-        } else {
-          this.errors.push(
-            `Invalid operand types for ${op}: ${left} and ${right}`
-          );
-          return "undefined"; // Return a fallback type for error handling
-        }
-      }
-
-      // Handle logical operators (and, or)
-      if (["and", "or"].includes(op)) {
-        if (left === "bool" && right === "bool") return "bool";
-        else {
-          this.errors.push(
-            `Invalid boolean operands for ${op}: ${left} and ${right}`
-          );
-          return "undefined"; // Return a fallback type for error handling
-        }
-      }
-
-      // Handle comparison operators (==, !=, <, >, <=, >=)
-      if (["==", "!=", "<", ">", "<=", ">="].includes(op)) {
-        if (left === right) return "bool";
-        else {
-          this.errors.push(
-            `Invalid operand types for ${op}: ${left} and ${right}`
-          );
-          return "undefined"; // Return a fallback type for error handling
-        }
+    if (mathOperators.includes(op)) {
+      if (left === "int" && right === "int") {
+        return "int";
+      } else {
+        this.errors.push(
+            `Invalid operand types for ${op}: ${left} and ${right}, expected int`
+        );
+        return "undefined";
       }
     }
 
-    // Handle parenthesis (return the type of the expression inside)
-    if (ctx instanceof PLCParser.ParenExprContext) {
-      return (this.visit(ctx.expression()) as Type) || "undefined";
+    if (logicalOperators.includes(op)) {
+      if (left === "bool" && right === "bool") {
+        return "bool";
+      } else {
+        this.errors.push(
+            `Invalid boolean operands for ${op}: ${left} and ${right}, expected bool`
+        );
+        return "undefined";
+      }
     }
 
-    // Handle other expression types as needed
-    this.errors.push("Unsupported expression type encountered");
-    return "undefined"; // Return a fallback type for error handling
+    if (comparisonOperators.includes(op)) {
+      if (left === right && left !== "undefined") {
+        return "bool";
+      } else {
+        this.errors.push(
+            `Invalid operand types for ${op}: ${left} and ${right}, they must be of the same type`
+        );
+        return "undefined";
+      }
+    }
+
+    this.errors.push(`Unknown operator: ${op}`);
+    return "undefined";
+  }
+
+  visitNotExpr(ctx: NotExprContext): Type {
+    const exprType = this.visit(ctx.expression()) as Type;
+    if (exprType !== "bool") {
+      this.errors.push(`Operand of 'not' must be of type bool, got ${exprType}`);
+      return "undefined";
+    }
+    return "bool";
+  }
+
+  visitParenExpr(ctx: ParenExprContext): Type {
+    return this.visit(ctx.expression()) as Type;
+  }
+
+  visitBooleanLiteral(ctx: BooleanLiteralContext): Type {
+    return "bool";
+  }
+
+  visitIntLiteral(ctx: IntLiteralContext): Type {
+    return "int";
+  }
+
+  visitIdentifierExpr(ctx: IdentifierExprContext): Type {
+    const name = ctx.IDENTIFIER().text;
+    const t = this.variables[name];
+    if (!t) {
+      this.errors.push(`Variable '${name}' not declared`);
+      return "undefined";
+    }
+    return t;
   }
 }

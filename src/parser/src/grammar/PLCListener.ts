@@ -3,10 +3,7 @@
 
 import { ParseTreeListener } from "antlr4ts/tree/ParseTreeListener";
 
-import { MulDivExprContext } from "./PLCParser";
-import { AddSubExprContext } from "./PLCParser";
-import { ComparisonExprContext } from "./PLCParser";
-import { LogicalExprContext } from "./PLCParser";
+import { BinaryExprContext } from "./PLCParser";
 import { NotExprContext } from "./PLCParser";
 import { ParenExprContext } from "./PLCParser";
 import { BooleanLiteralContext } from "./PLCParser";
@@ -29,56 +26,17 @@ import { TypeContext } from "./PLCParser";
  */
 export interface PLCListener extends ParseTreeListener {
 	/**
-	 * Enter a parse tree produced by the `MulDivExpr`
+	 * Enter a parse tree produced by the `BinaryExpr`
 	 * labeled alternative in `PLCParser.expression`.
 	 * @param ctx the parse tree
 	 */
-	enterMulDivExpr?: (ctx: MulDivExprContext) => void;
+	enterBinaryExpr?: (ctx: BinaryExprContext) => void;
 	/**
-	 * Exit a parse tree produced by the `MulDivExpr`
+	 * Exit a parse tree produced by the `BinaryExpr`
 	 * labeled alternative in `PLCParser.expression`.
 	 * @param ctx the parse tree
 	 */
-	exitMulDivExpr?: (ctx: MulDivExprContext) => void;
-
-	/**
-	 * Enter a parse tree produced by the `AddSubExpr`
-	 * labeled alternative in `PLCParser.expression`.
-	 * @param ctx the parse tree
-	 */
-	enterAddSubExpr?: (ctx: AddSubExprContext) => void;
-	/**
-	 * Exit a parse tree produced by the `AddSubExpr`
-	 * labeled alternative in `PLCParser.expression`.
-	 * @param ctx the parse tree
-	 */
-	exitAddSubExpr?: (ctx: AddSubExprContext) => void;
-
-	/**
-	 * Enter a parse tree produced by the `ComparisonExpr`
-	 * labeled alternative in `PLCParser.expression`.
-	 * @param ctx the parse tree
-	 */
-	enterComparisonExpr?: (ctx: ComparisonExprContext) => void;
-	/**
-	 * Exit a parse tree produced by the `ComparisonExpr`
-	 * labeled alternative in `PLCParser.expression`.
-	 * @param ctx the parse tree
-	 */
-	exitComparisonExpr?: (ctx: ComparisonExprContext) => void;
-
-	/**
-	 * Enter a parse tree produced by the `LogicalExpr`
-	 * labeled alternative in `PLCParser.expression`.
-	 * @param ctx the parse tree
-	 */
-	enterLogicalExpr?: (ctx: LogicalExprContext) => void;
-	/**
-	 * Exit a parse tree produced by the `LogicalExpr`
-	 * labeled alternative in `PLCParser.expression`.
-	 * @param ctx the parse tree
-	 */
-	exitLogicalExpr?: (ctx: LogicalExprContext) => void;
+	exitBinaryExpr?: (ctx: BinaryExprContext) => void;
 
 	/**
 	 * Enter a parse tree produced by the `NotExpr`

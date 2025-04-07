@@ -3,10 +3,7 @@
 
 import { ParseTreeVisitor } from "antlr4ts/tree/ParseTreeVisitor";
 
-import { MulDivExprContext } from "./PLCParser";
-import { AddSubExprContext } from "./PLCParser";
-import { ComparisonExprContext } from "./PLCParser";
-import { LogicalExprContext } from "./PLCParser";
+import { BinaryExprContext } from "./PLCParser";
 import { NotExprContext } from "./PLCParser";
 import { ParenExprContext } from "./PLCParser";
 import { BooleanLiteralContext } from "./PLCParser";
@@ -32,36 +29,12 @@ import { TypeContext } from "./PLCParser";
  */
 export interface PLCVisitor<Result> extends ParseTreeVisitor<Result> {
 	/**
-	 * Visit a parse tree produced by the `MulDivExpr`
+	 * Visit a parse tree produced by the `BinaryExpr`
 	 * labeled alternative in `PLCParser.expression`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitMulDivExpr?: (ctx: MulDivExprContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by the `AddSubExpr`
-	 * labeled alternative in `PLCParser.expression`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitAddSubExpr?: (ctx: AddSubExprContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by the `ComparisonExpr`
-	 * labeled alternative in `PLCParser.expression`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitComparisonExpr?: (ctx: ComparisonExprContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by the `LogicalExpr`
-	 * labeled alternative in `PLCParser.expression`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitLogicalExpr?: (ctx: LogicalExprContext) => Result;
+	visitBinaryExpr?: (ctx: BinaryExprContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by the `NotExpr`

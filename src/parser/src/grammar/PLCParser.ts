@@ -490,17 +490,17 @@ export class PLCParser extends Parser {
 					switch ( this.interpreter.adaptivePredict(this._input, 5, this._ctx) ) {
 					case 1:
 						{
-						_localctx = new MulDivExprContext(new ExpressionContext(_parentctx, _parentState));
+						_localctx = new BinaryExprContext(new ExpressionContext(_parentctx, _parentState));
 						this.pushNewRecursionContext(_localctx, _startState, PLCParser.RULE_expression);
 						this.state = 80;
 						if (!(this.precpred(this._ctx, 9))) {
 							throw this.createFailedPredicateException("this.precpred(this._ctx, 9)");
 						}
 						this.state = 81;
-						(_localctx as MulDivExprContext)._op = this._input.LT(1);
+						(_localctx as BinaryExprContext)._op = this._input.LT(1);
 						_la = this._input.LA(1);
 						if (!(_la === PLCParser.T__10 || _la === PLCParser.T__11)) {
-							(_localctx as MulDivExprContext)._op = this._errHandler.recoverInline(this);
+							(_localctx as BinaryExprContext)._op = this._errHandler.recoverInline(this);
 						} else {
 							if (this._input.LA(1) === Token.EOF) {
 								this.matchedEOF = true;
@@ -516,17 +516,17 @@ export class PLCParser extends Parser {
 
 					case 2:
 						{
-						_localctx = new AddSubExprContext(new ExpressionContext(_parentctx, _parentState));
+						_localctx = new BinaryExprContext(new ExpressionContext(_parentctx, _parentState));
 						this.pushNewRecursionContext(_localctx, _startState, PLCParser.RULE_expression);
 						this.state = 83;
 						if (!(this.precpred(this._ctx, 8))) {
 							throw this.createFailedPredicateException("this.precpred(this._ctx, 8)");
 						}
 						this.state = 84;
-						(_localctx as AddSubExprContext)._op = this._input.LT(1);
+						(_localctx as BinaryExprContext)._op = this._input.LT(1);
 						_la = this._input.LA(1);
 						if (!(_la === PLCParser.T__12 || _la === PLCParser.T__13)) {
-							(_localctx as AddSubExprContext)._op = this._errHandler.recoverInline(this);
+							(_localctx as BinaryExprContext)._op = this._errHandler.recoverInline(this);
 						} else {
 							if (this._input.LA(1) === Token.EOF) {
 								this.matchedEOF = true;
@@ -542,17 +542,17 @@ export class PLCParser extends Parser {
 
 					case 3:
 						{
-						_localctx = new ComparisonExprContext(new ExpressionContext(_parentctx, _parentState));
+						_localctx = new BinaryExprContext(new ExpressionContext(_parentctx, _parentState));
 						this.pushNewRecursionContext(_localctx, _startState, PLCParser.RULE_expression);
 						this.state = 86;
 						if (!(this.precpred(this._ctx, 7))) {
 							throw this.createFailedPredicateException("this.precpred(this._ctx, 7)");
 						}
 						this.state = 87;
-						(_localctx as ComparisonExprContext)._op = this._input.LT(1);
+						(_localctx as BinaryExprContext)._op = this._input.LT(1);
 						_la = this._input.LA(1);
 						if (!((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << PLCParser.T__14) | (1 << PLCParser.T__15) | (1 << PLCParser.T__16) | (1 << PLCParser.T__17) | (1 << PLCParser.T__18) | (1 << PLCParser.T__19))) !== 0))) {
-							(_localctx as ComparisonExprContext)._op = this._errHandler.recoverInline(this);
+							(_localctx as BinaryExprContext)._op = this._errHandler.recoverInline(this);
 						} else {
 							if (this._input.LA(1) === Token.EOF) {
 								this.matchedEOF = true;
@@ -568,17 +568,17 @@ export class PLCParser extends Parser {
 
 					case 4:
 						{
-						_localctx = new LogicalExprContext(new ExpressionContext(_parentctx, _parentState));
+						_localctx = new BinaryExprContext(new ExpressionContext(_parentctx, _parentState));
 						this.pushNewRecursionContext(_localctx, _startState, PLCParser.RULE_expression);
 						this.state = 89;
 						if (!(this.precpred(this._ctx, 6))) {
 							throw this.createFailedPredicateException("this.precpred(this._ctx, 6)");
 						}
 						this.state = 90;
-						(_localctx as LogicalExprContext)._op = this._input.LT(1);
+						(_localctx as BinaryExprContext)._op = this._input.LT(1);
 						_la = this._input.LA(1);
 						if (!(_la === PLCParser.T__20 || _la === PLCParser.T__21)) {
-							(_localctx as LogicalExprContext)._op = this._errHandler.recoverInline(this);
+							(_localctx as BinaryExprContext)._op = this._errHandler.recoverInline(this);
 						} else {
 							if (this._input.LA(1) === Token.EOF) {
 								this.matchedEOF = true;
@@ -1004,7 +1004,7 @@ export class ExpressionContext extends ParserRuleContext {
 		super.copyFrom(ctx);
 	}
 }
-export class MulDivExprContext extends ExpressionContext {
+export class BinaryExprContext extends ExpressionContext {
 	public _op!: Token;
 	public expression(): ExpressionContext[];
 	public expression(i: number): ExpressionContext;
@@ -1021,128 +1021,20 @@ export class MulDivExprContext extends ExpressionContext {
 	}
 	// @Override
 	public enterRule(listener: PLCListener): void {
-		if (listener.enterMulDivExpr) {
-			listener.enterMulDivExpr(this);
+		if (listener.enterBinaryExpr) {
+			listener.enterBinaryExpr(this);
 		}
 	}
 	// @Override
 	public exitRule(listener: PLCListener): void {
-		if (listener.exitMulDivExpr) {
-			listener.exitMulDivExpr(this);
+		if (listener.exitBinaryExpr) {
+			listener.exitBinaryExpr(this);
 		}
 	}
 	// @Override
 	public accept<Result>(visitor: PLCVisitor<Result>): Result {
-		if (visitor.visitMulDivExpr) {
-			return visitor.visitMulDivExpr(this);
-		} else {
-			return visitor.visitChildren(this);
-		}
-	}
-}
-export class AddSubExprContext extends ExpressionContext {
-	public _op!: Token;
-	public expression(): ExpressionContext[];
-	public expression(i: number): ExpressionContext;
-	public expression(i?: number): ExpressionContext | ExpressionContext[] {
-		if (i === undefined) {
-			return this.getRuleContexts(ExpressionContext);
-		} else {
-			return this.getRuleContext(i, ExpressionContext);
-		}
-	}
-	constructor(ctx: ExpressionContext) {
-		super(ctx.parent, ctx.invokingState);
-		this.copyFrom(ctx);
-	}
-	// @Override
-	public enterRule(listener: PLCListener): void {
-		if (listener.enterAddSubExpr) {
-			listener.enterAddSubExpr(this);
-		}
-	}
-	// @Override
-	public exitRule(listener: PLCListener): void {
-		if (listener.exitAddSubExpr) {
-			listener.exitAddSubExpr(this);
-		}
-	}
-	// @Override
-	public accept<Result>(visitor: PLCVisitor<Result>): Result {
-		if (visitor.visitAddSubExpr) {
-			return visitor.visitAddSubExpr(this);
-		} else {
-			return visitor.visitChildren(this);
-		}
-	}
-}
-export class ComparisonExprContext extends ExpressionContext {
-	public _op!: Token;
-	public expression(): ExpressionContext[];
-	public expression(i: number): ExpressionContext;
-	public expression(i?: number): ExpressionContext | ExpressionContext[] {
-		if (i === undefined) {
-			return this.getRuleContexts(ExpressionContext);
-		} else {
-			return this.getRuleContext(i, ExpressionContext);
-		}
-	}
-	constructor(ctx: ExpressionContext) {
-		super(ctx.parent, ctx.invokingState);
-		this.copyFrom(ctx);
-	}
-	// @Override
-	public enterRule(listener: PLCListener): void {
-		if (listener.enterComparisonExpr) {
-			listener.enterComparisonExpr(this);
-		}
-	}
-	// @Override
-	public exitRule(listener: PLCListener): void {
-		if (listener.exitComparisonExpr) {
-			listener.exitComparisonExpr(this);
-		}
-	}
-	// @Override
-	public accept<Result>(visitor: PLCVisitor<Result>): Result {
-		if (visitor.visitComparisonExpr) {
-			return visitor.visitComparisonExpr(this);
-		} else {
-			return visitor.visitChildren(this);
-		}
-	}
-}
-export class LogicalExprContext extends ExpressionContext {
-	public _op!: Token;
-	public expression(): ExpressionContext[];
-	public expression(i: number): ExpressionContext;
-	public expression(i?: number): ExpressionContext | ExpressionContext[] {
-		if (i === undefined) {
-			return this.getRuleContexts(ExpressionContext);
-		} else {
-			return this.getRuleContext(i, ExpressionContext);
-		}
-	}
-	constructor(ctx: ExpressionContext) {
-		super(ctx.parent, ctx.invokingState);
-		this.copyFrom(ctx);
-	}
-	// @Override
-	public enterRule(listener: PLCListener): void {
-		if (listener.enterLogicalExpr) {
-			listener.enterLogicalExpr(this);
-		}
-	}
-	// @Override
-	public exitRule(listener: PLCListener): void {
-		if (listener.exitLogicalExpr) {
-			listener.exitLogicalExpr(this);
-		}
-	}
-	// @Override
-	public accept<Result>(visitor: PLCVisitor<Result>): Result {
-		if (visitor.visitLogicalExpr) {
-			return visitor.visitLogicalExpr(this);
+		if (visitor.visitBinaryExpr) {
+			return visitor.visitBinaryExpr(this);
 		} else {
 			return visitor.visitChildren(this);
 		}

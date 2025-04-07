@@ -31,10 +31,10 @@ block
     ;
 
 expression
-    : expression op=('*'|'/') expression     # MulDivExpr
-    | expression op=('+'|'-') expression     # AddSubExpr
-    | expression op=('=='|'!='|'<'|'>'|'<='|'>=') expression # ComparisonExpr
-    | expression op=('and'|'or') expression  # LogicalExpr
+    : expression op=('*'|'/') expression     # BinaryExpr
+    | expression op=('+'|'-') expression     # BinaryExpr
+    | expression op=('=='|'!='|'<'|'>'|'<='|'>=') expression # BinaryExpr
+    | expression op=('and'|'or') expression  # BinaryExpr
     | 'not' expression                       # NotExpr
     | '(' expression ')'                     # ParenExpr
     | BOOLEAN                                # BooleanLiteral
