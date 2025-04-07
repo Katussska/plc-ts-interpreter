@@ -4,7 +4,7 @@ dist/
 build/
 *.log
 
-# ANTLR generated files (optional, if you don’t want to track them)
+# ANTLR generated files
 *.interp
 *.tokens
 *.ts~    # temporary TS files
