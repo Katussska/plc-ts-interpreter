@@ -3,23 +3,8 @@ import { ParseTree } from "antlr4ts/tree/ParseTree";
 import { PLCVisitor } from "../parser/src/grammar/PLCVisitor";
 import { ParserRuleContext } from "antlr4ts";
 import * as PLCParser from "../parser/src/grammar/PLCParser";
-import {
-  ProgramContext,
-  StatementContext,
-  VariableDeclarationContext,
-  AssignmentContext,
-  IfStatementContext,
-  WhileStatementContext,
-  BlockContext,
-  BinaryExprContext,
-  NotExprContext,
-  ParenExprContext,
-  BooleanLiteralContext,
-  IntLiteralContext,
-  IdentifierExprContext,
-} from "../parser/src/grammar/PLCParser";
 
-type Type = "int" | "bool" | "undefined";
+type Type = "int" | "float" | "bool" | "string" | "undefined";
 
 interface VariableTable {
   [name: string]: Type;
@@ -36,60 +21,73 @@ export class TypeChecker
     return;
   }
 
-  visitProgram(ctx: ProgramContext): void {
+  visitProgram(ctx: PLCParser.ProgramContext): void {
     for (let i = 0; i < ctx.statement().length; i++) {
       this.visit(ctx.statement(i));
     }
   }
 
-  visitStatement(ctx: StatementContext): void {
-    if (ctx.assignment()) {
-      this.visit(ctx.assignment()!);
-    } else if (ctx.variableDeclaration()) {
-      this.visit(ctx.variableDeclaration()!);
-    } else if (ctx.ifStatement()) {
-      this.visit(ctx.ifStatement()!);
-    } else if (ctx.whileStatement()) {
-      this.visit(ctx.whileStatement()!);
+  visitStatement(ctx: PLCParser.StatementContext): void {
+    // Visit all possible statement types
+    if (ctx.varDeclaration()) {
+      this.visit(ctx.varDeclaration()!);
+    } else if (ctx.expressionStmt()) {
+      this.visit(ctx.expressionStmt()!);
+    } else if (ctx.readStmt()) {
+      this.visit(ctx.readStmt()!);
+    } else if (ctx.writeStmt()) {
+      this.visit(ctx.writeStmt()!);
     } else if (ctx.block()) {
       this.visit(ctx.block()!);
+    } else if (ctx.ifStmt()) {
+      this.visit(ctx.ifStmt()!);
+    } else if (ctx.whileStmt()) {
+      this.visit(ctx.whileStmt()!);
     }
   }
 
-  visitBlock(ctx: BlockContext): void {
+  visitVarDeclaration(ctx: PLCParser.VarDeclarationContext): void {
+    const typeText = ctx.TYPE().text as Type;
+
+    // Handle multiple variable declarations (ID (',' ID)*)
+    for (let i = 0; i < ctx.ID().length; i++) {
+      const varName = ctx.ID(i).text;
+
+      if (this.variables[varName]) {
+        this.errors.push(`Variable '${varName}' already declared`);
+      } else {
+        this.variables[varName] = typeText;
+      }
+    }
+  }
+
+  visitExpressionStmt(ctx: PLCParser.ExpressionStmtContext): void {
+    this.visit(ctx.expression());
+  }
+
+  visitReadStmt(ctx: PLCParser.ReadStmtContext): void {
+    // Check that all variables being read into exist
+    for (let i = 0; i < ctx.ID().length; i++) {
+      const varName = ctx.ID(i).text;
+
+      if (!this.variables[varName]) {
+        this.errors.push(`Cannot read into undeclared variable '${varName}'`);
+      }
+    }
+  }
+
+  visitWriteStmt(ctx: PLCParser.WriteStmtContext): void {
+    // Check all expressions being written
+    for (let i = 0; i < ctx.expression().length; i++) {
+      this.visit(ctx.expression(i));
+    }
+  }
+
+  visitBlock(ctx: PLCParser.BlockContext): void {
     ctx.statement().forEach(stmt => this.visit(stmt));
   }
 
-  visitVariableDeclaration(ctx: VariableDeclarationContext): void {
-    const varName = ctx.IDENTIFIER().text;
-    const typeText = ctx.type().text as Type;
-    const exprType = this.visit(ctx.expression()) as Type;
-
-    if (this.variables[varName]) {
-      this.errors.push(`Variable '${varName}' already declared`);
-    } else if (exprType !== typeText) {
-      this.errors.push(
-          `Type mismatch in declaration of '${varName}': expected ${typeText}, got ${exprType}`
-      );
-    }
-
-    this.variables[varName] = typeText;
-  }
-
-  visitAssignment(ctx: AssignmentContext): void {
-    const varName = ctx.IDENTIFIER().text;
-    const exprType = this.visit(ctx.expression()) as Type;
-
-    if (!this.variables[varName]) {
-      this.errors.push(`Variable '${varName}' not declared`);
-    } else if (this.variables[varName] !== exprType) {
-      this.errors.push(
-          `Type mismatch in assignment to '${varName}': expected ${this.variables[varName]}, got ${exprType}`
-      );
-    }
-  }
-
-  visitIfStatement(ctx: IfStatementContext): void {
+  visitIfStmt(ctx: PLCParser.IfStmtContext): void {
     const condType = this.visit(ctx.expression()) as Type;
     if (condType !== "bool") {
       this.errors.push(
@@ -97,13 +95,13 @@ export class TypeChecker
       );
     }
 
-    this.visit(ctx.block(0));
-    if (ctx.block(1)) {
-      this.visit(ctx.block(1));
+    this.visit(ctx.statement(0));
+    if (ctx.statement(1)) {
+      this.visit(ctx.statement(1));
     }
   }
 
-  visitWhileStatement(ctx: WhileStatementContext): void {
+  visitWhileStmt(ctx: PLCParser.WhileStmtContext): void {
     const condType = this.visit(ctx.expression()) as Type;
     if (condType !== "bool") {
       this.errors.push(
@@ -111,84 +109,209 @@ export class TypeChecker
       );
     }
 
-    this.visit(ctx.block());
+    this.visit(ctx.statement());
   }
 
-  // Implementace jednotlivých typů výrazů
-  visitBinaryExpr(ctx: BinaryExprContext): Type {
+  // Expression handlers
+  visitAssignment(ctx: PLCParser.AssignmentContext): Type {
+    const varName = ctx.ID().text;
+    const exprType = this.visit(ctx.expression()) as Type;
+
+    if (!this.variables[varName]) {
+      this.errors.push(`Variable '${varName}' not declared`);
+      return "undefined";
+    } else if (this.variables[varName] !== exprType && exprType !== "undefined") {
+      this.errors.push(
+          `Type mismatch in assignment to '${varName}': expected ${this.variables[varName]}, got ${exprType}`
+      );
+      return "undefined";
+    }
+
+    return this.variables[varName];
+  }
+
+  visitConcat(ctx: PLCParser.ConcatContext): Type {
     const left = this.visit(ctx.expression(0)) as Type;
     const right = this.visit(ctx.expression(1)) as Type;
-    const op = ctx._op?.text || "";  // Přidáme bezpečný přístup a fallback na prázdný řetězec
 
-    const mathOperators = ["+", "-", "*", "/"];
-    const logicalOperators = ["and", "or"];
-    const comparisonOperators = ["==", "!=", "<", ">", "<=", ">="];
-
-    if (mathOperators.includes(op)) {
-      if (left === "int" && right === "int") {
-        return "int";
-      } else {
-        this.errors.push(
-            `Invalid operand types for ${op}: ${left} and ${right}, expected int`
-        );
-        return "undefined";
-      }
+    if (left === "string" && right === "string") {
+      return "string";
+    } else {
+      this.errors.push(
+          `Concatenation operator '.' requires string operands, got ${left} and ${right}`
+      );
+      return "undefined";
     }
-
-    if (logicalOperators.includes(op)) {
-      if (left === "bool" && right === "bool") {
-        return "bool";
-      } else {
-        this.errors.push(
-            `Invalid boolean operands for ${op}: ${left} and ${right}, expected bool`
-        );
-        return "undefined";
-      }
-    }
-
-    if (comparisonOperators.includes(op)) {
-      if (left === right && left !== "undefined") {
-        return "bool";
-      } else {
-        this.errors.push(
-            `Invalid operand types for ${op}: ${left} and ${right}, they must be of the same type`
-        );
-        return "undefined";
-      }
-    }
-
-    this.errors.push(`Unknown operator: ${op}`);
-    return "undefined";
   }
 
-  visitNotExpr(ctx: NotExprContext): Type {
+  visitMulDivMod(ctx: PLCParser.MulDivModContext): Type {
+    const left = this.visit(ctx.expression(0)) as Type;
+    const right = this.visit(ctx.expression(1)) as Type;
+
+    // Get the operator directly from the text in between the expressions
+    let op = "";
+    if (ctx.children && ctx.children.length > 1) {
+      op = ctx.children[1].text; // The operator is the second child (index 1)
+    }
+
+    if ((left === "int" || left === "float") && (right === "int" || right === "float")) {
+      // If either operand is float, result is float
+      if (left === "float" || right === "float") {
+        return "float";
+      } else {
+        return "int";
+      }
+    } else {
+      this.errors.push(
+          `Invalid operand types for ${op}: ${left} and ${right}, expected numeric types`
+      );
+      return "undefined";
+    }
+  }
+
+  visitAddSub(ctx: PLCParser.AddSubContext): Type {
+    const left = this.visit(ctx.expression(0)) as Type;
+    const right = this.visit(ctx.expression(1)) as Type;
+
+    // Get the operator directly from the text in between the expressions
+    let op = "";
+    if (ctx.children && ctx.children.length > 1) {
+      op = ctx.children[1].text; // The operator is the second child (index 1)
+    }
+
+    if ((left === "int" || left === "float") && (right === "int" || right === "float")) {
+      // If either operand is float, result is float
+      if (left === "float" || right === "float") {
+        return "float";
+      } else {
+        return "int";
+      }
+    } else {
+      this.errors.push(
+          `Invalid operand types for ${op}: ${left} and ${right}, expected numeric types`
+      );
+      return "undefined";
+    }
+  }
+
+  visitRelOp(ctx: PLCParser.RelOpContext): Type {
+    const left = this.visit(ctx.expression(0)) as Type;
+    const right = this.visit(ctx.expression(1)) as Type;
+
+    // Get the operator directly from the text in between the expressions
+    let op = "";
+    if (ctx.children && ctx.children.length > 1) {
+      op = ctx.children[1].text; // The operator is the second child (index 1)
+    }
+
+    if ((left === "int" || left === "float") && (right === "int" || right === "float")) {
+      return "bool";
+    } else {
+      this.errors.push(
+          `Invalid operand types for comparison ${op}: ${left} and ${right}, expected numeric types`
+      );
+      return "undefined";
+    }
+  }
+
+  visitEqNeq(ctx: PLCParser.EqNeqContext): Type {
+    const left = this.visit(ctx.expression(0)) as Type;
+    const right = this.visit(ctx.expression(1)) as Type;
+
+    // Get the operator directly from the text in between the expressions
+    let op = "";
+    if (ctx.children && ctx.children.length > 1) {
+      op = ctx.children[1].text; // The operator is the second child (index 1)
+    }
+
+    if (left === right && left !== "undefined") {
+      return "bool";
+    } else {
+      this.errors.push(
+          `Invalid operand types for equality check ${op}: ${left} and ${right}, they must be of the same type`
+      );
+      return "undefined";
+    }
+  }
+
+  visitAnd(ctx: PLCParser.AndContext): Type {
+    const left = this.visit(ctx.expression(0)) as Type;
+    const right = this.visit(ctx.expression(1)) as Type;
+
+    if (left === "bool" && right === "bool") {
+      return "bool";
+    } else {
+      this.errors.push(
+          `Logical AND requires boolean operands, got ${left} and ${right}`
+      );
+      return "undefined";
+    }
+  }
+
+  visitOr(ctx: PLCParser.OrContext): Type {
+    const left = this.visit(ctx.expression(0)) as Type;
+    const right = this.visit(ctx.expression(1)) as Type;
+
+    if (left === "bool" && right === "bool") {
+      return "bool";
+    } else {
+      this.errors.push(
+          `Logical OR requires boolean operands, got ${left} and ${right}`
+      );
+      return "undefined";
+    }
+  }
+
+  visitNot(ctx: PLCParser.NotContext): Type {
     const exprType = this.visit(ctx.expression()) as Type;
     if (exprType !== "bool") {
-      this.errors.push(`Operand of 'not' must be of type bool, got ${exprType}`);
+      this.errors.push(`Logical NOT requires boolean operand, got ${exprType}`);
       return "undefined";
     }
     return "bool";
   }
 
-  visitParenExpr(ctx: ParenExprContext): Type {
+  visitUnaryMinus(ctx: PLCParser.UnaryMinusContext): Type {
+    const exprType = this.visit(ctx.expression()) as Type;
+    if (exprType !== "int" && exprType !== "float") {
+      this.errors.push(`Unary minus requires numeric operand, got ${exprType}`);
+      return "undefined";
+    }
+    return exprType;
+  }
+
+  visitParens(ctx: PLCParser.ParensContext): Type {
     return this.visit(ctx.expression()) as Type;
   }
 
-  visitBooleanLiteral(ctx: BooleanLiteralContext): Type {
-    return "bool";
+  visitLiteralExpr(ctx: PLCParser.LiteralExprContext): Type {
+    return this.visit(ctx.literal()) as Type;
   }
 
-  visitIntLiteral(ctx: IntLiteralContext): Type {
-    return "int";
-  }
-
-  visitIdentifierExpr(ctx: IdentifierExprContext): Type {
-    const name = ctx.IDENTIFIER().text;
+  visitVarExpr(ctx: PLCParser.VarExprContext): Type {
+    const name = ctx.ID().text;
     const t = this.variables[name];
     if (!t) {
       this.errors.push(`Variable '${name}' not declared`);
       return "undefined";
     }
     return t;
+  }
+
+  // Literal type handlers
+  visitIntLiteral(ctx: PLCParser.IntLiteralContext): Type {
+    return "int";
+  }
+
+  visitFloatLiteral(ctx: PLCParser.FloatLiteralContext): Type {
+    return "float";
+  }
+
+  visitBoolLiteral(ctx: PLCParser.BoolLiteralContext): Type {
+    return "bool";
+  }
+
+  visitStringLiteral(ctx: PLCParser.StringLiteralContext): Type {
+    return "string";
   }
 }

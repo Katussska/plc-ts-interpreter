@@ -1,51 +1,48 @@
 grammar PLC;
 
-program: statement* EOF;
+// pravidlo pro začátek gramatiky
+program : statement* EOF;
 
+// pravidlo pro jednotlivé příkazy
 statement
-    : variableDeclaration
-    | assignment
-    | ifStatement
-    | whileStatement
-    | block
-    ;
+    : ';' | varDeclaration | expressionStmt | readStmt
+    | writeStmt | block | ifStmt | whileStmt | expressionStmt ;
 
-variableDeclaration
-    : 'let' IDENTIFIER ':' type '=' expression
-    ;
+varDeclaration : TYPE ID (',' ID)* ';' ;
+expressionStmt : expression ';' ;
 
-assignment
-    : IDENTIFIER '=' expression
-    ;
+readStmt : 'read' ID (',' ID)* ';' ;
+writeStmt : 'write' expression (',' expression)* ';' ;
 
-ifStatement
-    : 'if' '(' expression ')' block ('else' block)?
-    ;
-
-whileStatement
-    : 'while' '(' expression ')' block
-    ;
-
-block
-    : '{' statement* '}'
-    ;
+block : '{' statement* '}' ;
+ifStmt : 'if' '(' expression ')' statement ('else' statement)? ;
+whileStmt : 'while' '(' expression ')' statement;
 
 expression
-    : expression op=('*'|'/') expression     # BinaryExpr
-    | expression op=('+'|'-') expression     # BinaryExpr
-    | expression op=('=='|'!='|'<'|'>'|'<='|'>=') expression # BinaryExpr
-    | expression op=('and'|'or') expression  # BinaryExpr
-    | 'not' expression                       # NotExpr
-    | '(' expression ')'                     # ParenExpr
-    | BOOLEAN                                # BooleanLiteral
-    | INTEGER                                # IntLiteral
-    | IDENTIFIER                             # IdentifierExpr
+    : ID '=' expression                          # assignment
+    | expression '.' expression                  # concat
+    | expression ('*' | '/' | '%') expression    # mulDivMod
+    | expression ('+' | '-') expression          # addSub
+    | expression ('<' | '>') expression          # relOp
+    | expression ('==' | '!=') expression        # eqNeq
+    | expression '&&' expression                 # and
+    | expression '||' expression                 # or
+    | '!' expression                            # not
+    | '-' expression                            # unaryMinus
+    | '(' expression ')'                        # parens
+    | literal                                   # literalExpr
+    | ID                                        # varExpr
     ;
 
-type: 'int' | 'bool';
+literal: INT #intLiteral | FLOAT #floatLiteral | BOOL #boolLiteral | STRING #stringLiteral;
+INT: [0-9]+;
+FLOAT: [0-9]+ '.' [0-9]* | '.' [0-9]+;
+STRING: '"' ( ~["\\] | '\\' [\\"nrt] )* '"';
+BOOL: 'true' | 'false';
 
-BOOLEAN: 'true' | 'false';
-INTEGER: [0-9]+;
-IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]*;
+TYPE: 'int' | 'float' | 'bool' | 'string';
 
+ID: [a-zA-Z][a-zA-Z0-9]*;
+
+COMMENT: '//' ~[\r\n]* -> skip;
 WS: [ \t\r\n]+ -> skip;

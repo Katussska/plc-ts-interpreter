@@ -1,8 +1,8 @@
-import { CharStreams, CommonTokenStream } from 'antlr4ts';
-import { PLCLexer } from './parser/src/grammar/PLCLexer';
-import { PLCParser } from './parser/src/grammar/PLCParser';
-import { TypeChecker } from './typecheck/TypeChecker';
-import { SyntaxErrorListener } from './typecheck/SyntaxErrorListener';
+import {CharStreams, CommonTokenStream} from 'antlr4ts';
+import {PLCLexer} from './parser/src/grammar/PLCLexer';
+import {PLCParser} from './parser/src/grammar/PLCParser';
+import {TypeChecker} from './typecheck/TypeChecker';
+import {SyntaxErrorListener} from './typecheck/SyntaxErrorListener';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -15,19 +15,19 @@ if (inputFile) {
 } else {
     console.log('⚠️ No file provided. Using example PLC program.');
     code = `
-    let x: int = 0
-    let flag: bool = true
-
-    if (flag) {
-      x = x + 1
-    } else {
-      x = x - 1
-    }
-
-    while (x < 10 and flag) {
-      x = x + 1
-    }
-  `;
+        let x = 0;
+        let flag = true;
+        
+        if (flag) {
+          x = x + 1;
+        } else {
+          x = x - 1;
+        }
+        
+        while (x < 10 && flag) {
+          x = x + 1;
+        }   
+    `;
 }
 
 // Lexing & parsing

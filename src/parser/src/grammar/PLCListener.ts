@@ -3,21 +3,34 @@
 
 import { ParseTreeListener } from "antlr4ts/tree/ParseTreeListener";
 
-import { BinaryExprContext } from "./PLCParser";
-import { NotExprContext } from "./PLCParser";
-import { ParenExprContext } from "./PLCParser";
-import { BooleanLiteralContext } from "./PLCParser";
+import { AssignmentContext } from "./PLCParser";
+import { ConcatContext } from "./PLCParser";
+import { MulDivModContext } from "./PLCParser";
+import { AddSubContext } from "./PLCParser";
+import { RelOpContext } from "./PLCParser";
+import { EqNeqContext } from "./PLCParser";
+import { AndContext } from "./PLCParser";
+import { OrContext } from "./PLCParser";
+import { NotContext } from "./PLCParser";
+import { UnaryMinusContext } from "./PLCParser";
+import { ParensContext } from "./PLCParser";
+import { LiteralExprContext } from "./PLCParser";
+import { VarExprContext } from "./PLCParser";
 import { IntLiteralContext } from "./PLCParser";
-import { IdentifierExprContext } from "./PLCParser";
+import { FloatLiteralContext } from "./PLCParser";
+import { BoolLiteralContext } from "./PLCParser";
+import { StringLiteralContext } from "./PLCParser";
 import { ProgramContext } from "./PLCParser";
 import { StatementContext } from "./PLCParser";
-import { VariableDeclarationContext } from "./PLCParser";
-import { AssignmentContext } from "./PLCParser";
-import { IfStatementContext } from "./PLCParser";
-import { WhileStatementContext } from "./PLCParser";
+import { VarDeclarationContext } from "./PLCParser";
+import { ExpressionStmtContext } from "./PLCParser";
+import { ReadStmtContext } from "./PLCParser";
+import { WriteStmtContext } from "./PLCParser";
 import { BlockContext } from "./PLCParser";
+import { IfStmtContext } from "./PLCParser";
+import { WhileStmtContext } from "./PLCParser";
 import { ExpressionContext } from "./PLCParser";
-import { TypeContext } from "./PLCParser";
+import { LiteralContext } from "./PLCParser";
 
 
 /**
@@ -26,82 +39,225 @@ import { TypeContext } from "./PLCParser";
  */
 export interface PLCListener extends ParseTreeListener {
 	/**
-	 * Enter a parse tree produced by the `BinaryExpr`
+	 * Enter a parse tree produced by the `assignment`
 	 * labeled alternative in `PLCParser.expression`.
 	 * @param ctx the parse tree
 	 */
-	enterBinaryExpr?: (ctx: BinaryExprContext) => void;
+	enterAssignment?: (ctx: AssignmentContext) => void;
 	/**
-	 * Exit a parse tree produced by the `BinaryExpr`
+	 * Exit a parse tree produced by the `assignment`
 	 * labeled alternative in `PLCParser.expression`.
 	 * @param ctx the parse tree
 	 */
-	exitBinaryExpr?: (ctx: BinaryExprContext) => void;
+	exitAssignment?: (ctx: AssignmentContext) => void;
 
 	/**
-	 * Enter a parse tree produced by the `NotExpr`
+	 * Enter a parse tree produced by the `concat`
 	 * labeled alternative in `PLCParser.expression`.
 	 * @param ctx the parse tree
 	 */
-	enterNotExpr?: (ctx: NotExprContext) => void;
+	enterConcat?: (ctx: ConcatContext) => void;
 	/**
-	 * Exit a parse tree produced by the `NotExpr`
+	 * Exit a parse tree produced by the `concat`
 	 * labeled alternative in `PLCParser.expression`.
 	 * @param ctx the parse tree
 	 */
-	exitNotExpr?: (ctx: NotExprContext) => void;
+	exitConcat?: (ctx: ConcatContext) => void;
 
 	/**
-	 * Enter a parse tree produced by the `ParenExpr`
+	 * Enter a parse tree produced by the `mulDivMod`
 	 * labeled alternative in `PLCParser.expression`.
 	 * @param ctx the parse tree
 	 */
-	enterParenExpr?: (ctx: ParenExprContext) => void;
+	enterMulDivMod?: (ctx: MulDivModContext) => void;
 	/**
-	 * Exit a parse tree produced by the `ParenExpr`
+	 * Exit a parse tree produced by the `mulDivMod`
 	 * labeled alternative in `PLCParser.expression`.
 	 * @param ctx the parse tree
 	 */
-	exitParenExpr?: (ctx: ParenExprContext) => void;
+	exitMulDivMod?: (ctx: MulDivModContext) => void;
 
 	/**
-	 * Enter a parse tree produced by the `BooleanLiteral`
+	 * Enter a parse tree produced by the `addSub`
 	 * labeled alternative in `PLCParser.expression`.
 	 * @param ctx the parse tree
 	 */
-	enterBooleanLiteral?: (ctx: BooleanLiteralContext) => void;
+	enterAddSub?: (ctx: AddSubContext) => void;
 	/**
-	 * Exit a parse tree produced by the `BooleanLiteral`
+	 * Exit a parse tree produced by the `addSub`
 	 * labeled alternative in `PLCParser.expression`.
 	 * @param ctx the parse tree
 	 */
-	exitBooleanLiteral?: (ctx: BooleanLiteralContext) => void;
+	exitAddSub?: (ctx: AddSubContext) => void;
 
 	/**
-	 * Enter a parse tree produced by the `IntLiteral`
+	 * Enter a parse tree produced by the `relOp`
 	 * labeled alternative in `PLCParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	enterRelOp?: (ctx: RelOpContext) => void;
+	/**
+	 * Exit a parse tree produced by the `relOp`
+	 * labeled alternative in `PLCParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	exitRelOp?: (ctx: RelOpContext) => void;
+
+	/**
+	 * Enter a parse tree produced by the `eqNeq`
+	 * labeled alternative in `PLCParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	enterEqNeq?: (ctx: EqNeqContext) => void;
+	/**
+	 * Exit a parse tree produced by the `eqNeq`
+	 * labeled alternative in `PLCParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	exitEqNeq?: (ctx: EqNeqContext) => void;
+
+	/**
+	 * Enter a parse tree produced by the `and`
+	 * labeled alternative in `PLCParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	enterAnd?: (ctx: AndContext) => void;
+	/**
+	 * Exit a parse tree produced by the `and`
+	 * labeled alternative in `PLCParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	exitAnd?: (ctx: AndContext) => void;
+
+	/**
+	 * Enter a parse tree produced by the `or`
+	 * labeled alternative in `PLCParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	enterOr?: (ctx: OrContext) => void;
+	/**
+	 * Exit a parse tree produced by the `or`
+	 * labeled alternative in `PLCParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	exitOr?: (ctx: OrContext) => void;
+
+	/**
+	 * Enter a parse tree produced by the `not`
+	 * labeled alternative in `PLCParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	enterNot?: (ctx: NotContext) => void;
+	/**
+	 * Exit a parse tree produced by the `not`
+	 * labeled alternative in `PLCParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	exitNot?: (ctx: NotContext) => void;
+
+	/**
+	 * Enter a parse tree produced by the `unaryMinus`
+	 * labeled alternative in `PLCParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	enterUnaryMinus?: (ctx: UnaryMinusContext) => void;
+	/**
+	 * Exit a parse tree produced by the `unaryMinus`
+	 * labeled alternative in `PLCParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	exitUnaryMinus?: (ctx: UnaryMinusContext) => void;
+
+	/**
+	 * Enter a parse tree produced by the `parens`
+	 * labeled alternative in `PLCParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	enterParens?: (ctx: ParensContext) => void;
+	/**
+	 * Exit a parse tree produced by the `parens`
+	 * labeled alternative in `PLCParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	exitParens?: (ctx: ParensContext) => void;
+
+	/**
+	 * Enter a parse tree produced by the `literalExpr`
+	 * labeled alternative in `PLCParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	enterLiteralExpr?: (ctx: LiteralExprContext) => void;
+	/**
+	 * Exit a parse tree produced by the `literalExpr`
+	 * labeled alternative in `PLCParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	exitLiteralExpr?: (ctx: LiteralExprContext) => void;
+
+	/**
+	 * Enter a parse tree produced by the `varExpr`
+	 * labeled alternative in `PLCParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	enterVarExpr?: (ctx: VarExprContext) => void;
+	/**
+	 * Exit a parse tree produced by the `varExpr`
+	 * labeled alternative in `PLCParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	exitVarExpr?: (ctx: VarExprContext) => void;
+
+	/**
+	 * Enter a parse tree produced by the `intLiteral`
+	 * labeled alternative in `PLCParser.literal`.
 	 * @param ctx the parse tree
 	 */
 	enterIntLiteral?: (ctx: IntLiteralContext) => void;
 	/**
-	 * Exit a parse tree produced by the `IntLiteral`
-	 * labeled alternative in `PLCParser.expression`.
+	 * Exit a parse tree produced by the `intLiteral`
+	 * labeled alternative in `PLCParser.literal`.
 	 * @param ctx the parse tree
 	 */
 	exitIntLiteral?: (ctx: IntLiteralContext) => void;
 
 	/**
-	 * Enter a parse tree produced by the `IdentifierExpr`
-	 * labeled alternative in `PLCParser.expression`.
+	 * Enter a parse tree produced by the `floatLiteral`
+	 * labeled alternative in `PLCParser.literal`.
 	 * @param ctx the parse tree
 	 */
-	enterIdentifierExpr?: (ctx: IdentifierExprContext) => void;
+	enterFloatLiteral?: (ctx: FloatLiteralContext) => void;
 	/**
-	 * Exit a parse tree produced by the `IdentifierExpr`
-	 * labeled alternative in `PLCParser.expression`.
+	 * Exit a parse tree produced by the `floatLiteral`
+	 * labeled alternative in `PLCParser.literal`.
 	 * @param ctx the parse tree
 	 */
-	exitIdentifierExpr?: (ctx: IdentifierExprContext) => void;
+	exitFloatLiteral?: (ctx: FloatLiteralContext) => void;
+
+	/**
+	 * Enter a parse tree produced by the `boolLiteral`
+	 * labeled alternative in `PLCParser.literal`.
+	 * @param ctx the parse tree
+	 */
+	enterBoolLiteral?: (ctx: BoolLiteralContext) => void;
+	/**
+	 * Exit a parse tree produced by the `boolLiteral`
+	 * labeled alternative in `PLCParser.literal`.
+	 * @param ctx the parse tree
+	 */
+	exitBoolLiteral?: (ctx: BoolLiteralContext) => void;
+
+	/**
+	 * Enter a parse tree produced by the `stringLiteral`
+	 * labeled alternative in `PLCParser.literal`.
+	 * @param ctx the parse tree
+	 */
+	enterStringLiteral?: (ctx: StringLiteralContext) => void;
+	/**
+	 * Exit a parse tree produced by the `stringLiteral`
+	 * labeled alternative in `PLCParser.literal`.
+	 * @param ctx the parse tree
+	 */
+	exitStringLiteral?: (ctx: StringLiteralContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `PLCParser.program`.
@@ -126,48 +282,48 @@ export interface PLCListener extends ParseTreeListener {
 	exitStatement?: (ctx: StatementContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `PLCParser.variableDeclaration`.
+	 * Enter a parse tree produced by `PLCParser.varDeclaration`.
 	 * @param ctx the parse tree
 	 */
-	enterVariableDeclaration?: (ctx: VariableDeclarationContext) => void;
+	enterVarDeclaration?: (ctx: VarDeclarationContext) => void;
 	/**
-	 * Exit a parse tree produced by `PLCParser.variableDeclaration`.
+	 * Exit a parse tree produced by `PLCParser.varDeclaration`.
 	 * @param ctx the parse tree
 	 */
-	exitVariableDeclaration?: (ctx: VariableDeclarationContext) => void;
+	exitVarDeclaration?: (ctx: VarDeclarationContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `PLCParser.assignment`.
+	 * Enter a parse tree produced by `PLCParser.expressionStmt`.
 	 * @param ctx the parse tree
 	 */
-	enterAssignment?: (ctx: AssignmentContext) => void;
+	enterExpressionStmt?: (ctx: ExpressionStmtContext) => void;
 	/**
-	 * Exit a parse tree produced by `PLCParser.assignment`.
+	 * Exit a parse tree produced by `PLCParser.expressionStmt`.
 	 * @param ctx the parse tree
 	 */
-	exitAssignment?: (ctx: AssignmentContext) => void;
+	exitExpressionStmt?: (ctx: ExpressionStmtContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `PLCParser.ifStatement`.
+	 * Enter a parse tree produced by `PLCParser.readStmt`.
 	 * @param ctx the parse tree
 	 */
-	enterIfStatement?: (ctx: IfStatementContext) => void;
+	enterReadStmt?: (ctx: ReadStmtContext) => void;
 	/**
-	 * Exit a parse tree produced by `PLCParser.ifStatement`.
+	 * Exit a parse tree produced by `PLCParser.readStmt`.
 	 * @param ctx the parse tree
 	 */
-	exitIfStatement?: (ctx: IfStatementContext) => void;
+	exitReadStmt?: (ctx: ReadStmtContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `PLCParser.whileStatement`.
+	 * Enter a parse tree produced by `PLCParser.writeStmt`.
 	 * @param ctx the parse tree
 	 */
-	enterWhileStatement?: (ctx: WhileStatementContext) => void;
+	enterWriteStmt?: (ctx: WriteStmtContext) => void;
 	/**
-	 * Exit a parse tree produced by `PLCParser.whileStatement`.
+	 * Exit a parse tree produced by `PLCParser.writeStmt`.
 	 * @param ctx the parse tree
 	 */
-	exitWhileStatement?: (ctx: WhileStatementContext) => void;
+	exitWriteStmt?: (ctx: WriteStmtContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `PLCParser.block`.
@@ -181,6 +337,28 @@ export interface PLCListener extends ParseTreeListener {
 	exitBlock?: (ctx: BlockContext) => void;
 
 	/**
+	 * Enter a parse tree produced by `PLCParser.ifStmt`.
+	 * @param ctx the parse tree
+	 */
+	enterIfStmt?: (ctx: IfStmtContext) => void;
+	/**
+	 * Exit a parse tree produced by `PLCParser.ifStmt`.
+	 * @param ctx the parse tree
+	 */
+	exitIfStmt?: (ctx: IfStmtContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `PLCParser.whileStmt`.
+	 * @param ctx the parse tree
+	 */
+	enterWhileStmt?: (ctx: WhileStmtContext) => void;
+	/**
+	 * Exit a parse tree produced by `PLCParser.whileStmt`.
+	 * @param ctx the parse tree
+	 */
+	exitWhileStmt?: (ctx: WhileStmtContext) => void;
+
+	/**
 	 * Enter a parse tree produced by `PLCParser.expression`.
 	 * @param ctx the parse tree
 	 */
@@ -192,14 +370,14 @@ export interface PLCListener extends ParseTreeListener {
 	exitExpression?: (ctx: ExpressionContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `PLCParser.type`.
+	 * Enter a parse tree produced by `PLCParser.literal`.
 	 * @param ctx the parse tree
 	 */
-	enterType?: (ctx: TypeContext) => void;
+	enterLiteral?: (ctx: LiteralContext) => void;
 	/**
-	 * Exit a parse tree produced by `PLCParser.type`.
+	 * Exit a parse tree produced by `PLCParser.literal`.
 	 * @param ctx the parse tree
 	 */
-	exitType?: (ctx: TypeContext) => void;
+	exitLiteral?: (ctx: LiteralContext) => void;
 }
 
