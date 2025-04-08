@@ -20,25 +20,70 @@ if (inputFile) {
   }
 } else {
   console.log('⚠️ No file provided. Using example PLC program.');
-  code = `
-        // Sample PLC program
-        int x;
-        x = 0;
-        bool flag;
-        flag = true;
-
-        if (flag) {
-          x = x + 1;
-        } else {
-          x = x - 1;
+  // code = `
+  //     // Valid FILE operations example
+  //     FILE fileHandle;
+  //     string filename;
+  //     filename = "data";
+  //     string extension;
+  //     extension = ".txt";
+  //
+  //     // Test concatenation of strings for filename
+  //     fileHandle = fopen filename.extension;
+  //
+  //     // You can also use string literals directly
+  //     FILE logFile;
+  //     logFile = fopen "log.txt";
+  //
+  //     // Other types still work as before
+  //     int counter;
+  //     counter = 0;
+  //
+  //     while (counter < 10) {
+  //       counter = counter + 1;
+  //       write "Counter: ", counter;
+  //     }
+  //
+  //     bool isFileOpen;
+  //     isFileOpen = true;
+  //
+  //     if (isFileOpen) {
+  //       write "File is open";
+  //     }
+  //   `;
+    code = `
+        // Error: Cannot use FILE in arithmetic operations
+        FILE badFile;
+        badFile = fopen "test.txt";
+        int value;
+        value = badFile + 5;  // Error: Operation + cannot be performed on FILE type
+        
+        // Error: fopen requires string arguments
+        FILE wrongFile;
+        wrongFile = fopen 123;  // Error: File path in 'fopen' must be a string, got int
+        
+        // Error: Cannot compare FILE types
+        FILE file1;
+        file1 = fopen "one.txt";
+        FILE file2;
+        file2 = fopen "two.txt";
+        if (file1 == file2) {  // Error: Invalid operand types for equality check
+          write "Same file";
         }
-
-        while (x < 10 && flag) {
-          x = x + 1;
+        
+        // Error: Cannot assign wrong types to FILE
+        int number;
+        number = 42;
+        FILE invalidAssignment;
+        invalidAssignment = number;  // Error: Type mismatch in assignment, expected FILE, got int
+        
+        // Error: Cannot use FILE in boolean conditions directly
+        FILE condFile;
+        condFile = fopen "condition.txt";
+        if (condFile) {  // Error: If condition must be a boolean, got FILE
+          write "This won't work";
         }
-
-        write "Final value of x: ", x;
-    `;
+        `;
 }
 
 // Lexing & parsing

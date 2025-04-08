@@ -3,7 +3,7 @@ import {PLCVisitor} from '../parser/src/grammar/PLCVisitor';
 import * as PLCParser from '../parser/src/grammar/PLCParser';
 import chalk from 'chalk';
 
-type Type = 'int' | 'float' | 'bool' | 'string' | 'undefined';
+type Type = 'int' | 'float' | 'bool' | 'string' | 'FILE' | 'undefined';
 
 interface VariableTable {
   [name: string]: Type;
@@ -159,6 +159,18 @@ export class TypeChecker
     return this.variables[varName];
   }
 
+  // File open operation handler
+  visitFileOpen(ctx: PLCParser.FileOpenContext): Type {
+    const pathType = this.visit(ctx.expression()) as Type;
+
+    if (pathType !== 'string') {
+      this.addError(`File path in 'fopen' must be a string, got ${pathType}`, ctx.start.line);
+      return 'undefined';
+    }
+
+    return 'FILE';
+  }
+
   // Expression handlers
   visitConcat(ctx: PLCParser.ConcatContext): Type {
     const left = this.visit(ctx.expression(0)) as Type;
@@ -181,6 +193,12 @@ export class TypeChecker
     let op = '';
     if (ctx.children && ctx.children.length > 1) {
       op = ctx.children[1].text; // The operator is the second child (index 1)
+    }
+
+    // Check for FILE type which is invalid for arithmetic operations
+    if (left === 'FILE' || right === 'FILE') {
+      this.addError(`Operation ${op} cannot be performed on FILE type`, ctx.start.line);
+      return 'undefined';
     }
 
     // Special handling for modulo operator
@@ -221,6 +239,12 @@ export class TypeChecker
       op = ctx.children[1].text; // The operator is the second child (index 1)
     }
 
+    // Check for FILE type which is invalid for arithmetic operations
+    if (left === 'FILE' || right === 'FILE') {
+      this.addError(`Operation ${op} cannot be performed on FILE type`, ctx.start.line);
+      return 'undefined';
+    }
+
     if (
         (left === 'int' || left === 'float') &&
         (right === 'int' || right === 'float')
@@ -246,6 +270,12 @@ export class TypeChecker
     let op = '';
     if (ctx.children && ctx.children.length > 1) {
       op = ctx.children[1].text; // The operator is the second child (index 1)
+    }
+
+    // Check for FILE type which is invalid for comparison operations
+    if (left === 'FILE' || right === 'FILE') {
+      this.addError(`Comparison operator ${op} cannot be used with FILE type`, ctx.start.line);
+      return 'undefined';
     }
 
     if (
@@ -349,6 +379,34 @@ export class TypeChecker
       return 'undefined';
     }
     return t;
+  }
+
+  // Multiple assignment handler
+  visitMultiAssignment(ctx: PLCParser.MultiAssignmentContext): Type {
+    // Process each ID=expression pair
+    let lastType: Type = 'undefined';
+
+    for (let i = 0; i < ctx.ID().length; i++) {
+      const varName = ctx.ID(i).text;
+      const exprType = this.visit(ctx.expression(i)) as Type;
+
+      if (!this.variables[varName]) {
+        this.addError(`Variable '${varName}' not declared`, ctx.start.line);
+        continue;
+      }
+
+      // Check type compatibility for assignment
+      if (this.variables[varName] !== exprType && exprType !== 'undefined') {
+        // Special case: Allow int to float conversion but not float to int
+        if (!(this.variables[varName] === 'float' && exprType === 'int')) {
+          this.addError(`Type mismatch in assignment to '${varName}': expected ${this.variables[varName]}, got ${exprType}`, ctx.start.line);
+        }
+      }
+
+      lastType = this.variables[varName];
+    }
+
+    return lastType;
   }
 
   // Literal type handlers

@@ -50,6 +50,7 @@ expression
     | literal                                    # literalExpr
     | ID                                         # varExpr
     | ID '=' expression (',' ID '=' expression)* # multiAssignment
+    | 'fopen' expression                         # fileOpen
     ;
 
 // Literály
@@ -60,7 +61,7 @@ STRING: '"' ( ~["\\] | '\\' [\\"nrt] )* '"';
 BOOL: 'true' | 'false';
 
 // Typy
-TYPE: 'int' | 'float' | 'bool' | 'string';
+TYPE: 'int' | 'float' | 'bool' | 'string'| 'FILE';
 
 // Identifikátory
 ID: [a-zA-Z][a-zA-Z0-9]*;
