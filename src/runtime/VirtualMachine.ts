@@ -103,7 +103,19 @@ export class VirtualMachine {
             case "add": binOp((a, b) => a + b, tokens[1] as ValueType); break;
             case "sub": binOp((a, b) => a - b, tokens[1] as ValueType); break;
             case "mul": binOp((a, b) => a * b, tokens[1] as ValueType); break;
-            case "div": binOp((a, b) => a / b, tokens[1] as ValueType); break;
+            case "div": {
+                const b = this.stack.pop();
+                const a = this.stack.pop();
+                if (!a || !b || a.type !== tokens[1] || b.type !== tokens[1]) {
+                    throw new Error(`${instr}: type mismatch`);
+                }
+                if (tokens[1] === 'I') {
+                    this.stack.push({ type: 'I', value: Math.floor(Number(a.value) / Number(b.value)) });
+                } else {
+                    this.stack.push({ type: tokens[1], value: Number(a.value) / Number(b.value) });
+                }
+                break;
+            }
             case "mod": binOp((a, b) => a % b, 'I'); break;
             case "uminus": unaryOp(a => -a, tokens[1] as ValueType); break;
             case "concat": binOp((a, b) => a + b, 'S'); break;
@@ -112,11 +124,13 @@ export class VirtualMachine {
             case "gt": binOp((a, b) => a > b, tokens[1] as ValueType); break;
             case "lt": binOp((a, b) => a < b, tokens[1] as ValueType); break;
             case "eq": binOp((a, b) => a === b, tokens[1] as ValueType); break;
-            case "not": unaryOp(a => !a, 'B'); break;
-            case "itof": {
-                const val = this.stack.pop();
-                if (!val || val.type !== 'I') throw new Error("itof: not an int");
-                this.stack.push({ type: 'F', value: parseFloat(val.value.toString()) });
+            case "not": {
+                const a = this.stack.pop();
+                if (!a || a.type !== 'B') {
+                    console.warn(`Warning: 'not' instruction expects a boolean ('B'), but got '${a?.type || 'undefined'}'. Skipping operation.`);
+                    break;
+                }
+                this.stack.push({ type: 'B', value: !a.value });
                 break;
             }
             case "load": {
@@ -143,8 +157,13 @@ export class VirtualMachine {
             case "fjmp": {
                 const label = tokens[1];
                 const cond = this.stack.pop();
-                if (!cond || cond.type !== 'B') throw new Error("fjmp: not a bool");
-                if (!cond.value) {
+                if (!cond) {
+                    throw new Error("fjmp: stack is empty, expected a boolean ('B')");
+                }
+                if (cond.type !== 'B') {
+                    throw new Error(`fjmp: type mismatch - expected 'B', got '${cond.type}'`);
+                }
+                if (!(cond.value as boolean)) {
                     const addr = this.labels.get(label);
                     if (addr === undefined) throw new Error(`fjmp: unknown label ${label}`);
                     this.programCounter = addr;
@@ -171,6 +190,14 @@ export class VirtualMachine {
                     default: throw new Error(`Invalid type in read: ${type}`);
                 }
                 this.stack.push({ type, value: val });
+                break;
+            }
+            case "itof": {
+                const a = this.stack.pop();
+                if (!a || a.type !== 'I') {
+                    throw new Error(`itof: type mismatch - expected 'I', got '${a?.type || 'undefined'}'`);
+                }
+                this.stack.push({ type: 'F', value: parseFloat(a.value.toString()) });
                 break;
             }
             default:
