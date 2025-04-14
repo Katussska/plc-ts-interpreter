@@ -1,8 +1,3 @@
-import {CharStreams, CommonTokenStream} from 'antlr4ts';
-import {PLCLexer} from './parser/src/grammar/PLCLexer';
-import {PLCParser} from './parser/src/grammar/PLCParser';
-import {TypeChecker} from './typecheck/TypeChecker';
-import {SyntaxErrorListener} from './typecheck/SyntaxErrorListener';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -13,78 +8,40 @@ const inputFile = process.argv[2];
 if (inputFile) {
   try {
     code = fs.readFileSync(path.resolve(inputFile), 'utf-8');
+    console.log('🔎 Resolved path:', path.resolve(inputFile));
     console.log(`📄 Processing file: ${inputFile}`);
+
+    // VM Mode – files starting with 'code' are treated as instruction sequences
+    if (path.basename(inputFile).startsWith('code')) {
+      console.log('🧠 Running PLC Virtual Machine (Instruction Mode)...');
+      const instructions = code
+          .split('\n')
+          .map(line => line.trim())
+          .filter(line => line.length > 0 && !line.startsWith('//'));
+
+      const { VirtualMachine } = require('./runtime/VirtualMachine'); // adjust path if needed
+      const vm = new VirtualMachine(instructions);
+
+      // Simulated input for read operations
+      vm.provideInput([
+        '42',         // a - int
+        '3.14',       // b - float
+        'Hello PLC',  // c - string
+        'true'        // e - bool
+      ]);
+
+      vm.run();
+        console.log('✅ Execution completed successfully!');
+      process.exit(0);
+    }
   } catch (error) {
-    console.error(`❌ Error reading file: ${inputFile}`);
+    // console.error(`❌ Error reading file: ${inputFile}`);
+    console.error(error);
     process.exit(1);
   }
-} else {
-  console.log('⚠️ No file provided. Using example PLC program.');
-  // code = `
-  //     // Valid FILE operations example
-  //     FILE fileHandle;
-  //     string filename;
-  //     filename = "data";
-  //     string extension;
-  //     extension = ".txt";
-  //
-  //     // Test concatenation of strings for filename
-  //     fileHandle = fopen filename.extension;
-  //
-  //     // You can also use string literals directly
-  //     FILE logFile;
-  //     logFile = fopen "log.txt";
-  //
-  //     // Other types still work as before
-  //     int counter;
-  //     counter = 0;
-  //
-  //     while (counter < 10) {
-  //       counter = counter + 1;
-  //       write "Counter: ", counter;
-  //     }
-  //
-  //     bool isFileOpen;
-  //     isFileOpen = true;
-  //
-  //     if (isFileOpen) {
-  //       write "File is open";
-  //     }
-  //   `;
-    code = `
-        // Error: Cannot use FILE in arithmetic operations
-        FILE badFile;
-        badFile = fopen "test.txt";
-        int value;
-        value = badFile + 5;  // Error: Operation + cannot be performed on FILE type
-        
-        // Error: fopen requires string arguments
-        FILE wrongFile;
-        wrongFile = fopen 123;  // Error: File path in 'fopen' must be a string, got int
-        
-        // Error: Cannot compare FILE types
-        FILE file1;
-        file1 = fopen "one.txt";
-        FILE file2;
-        file2 = fopen "two.txt";
-        if (file1 == file2) {  // Error: Invalid operand types for equality check
-          write "Same file";
-        }
-        
-        // Error: Cannot assign wrong types to FILE
-        int number;
-        number = 42;
-        FILE invalidAssignment;
-        invalidAssignment = number;  // Error: Type mismatch in assignment, expected FILE, got int
-        
-        // Error: Cannot use FILE in boolean conditions directly
-        FILE condFile;
-        condFile = fopen "condition.txt";
-        if (condFile) {  // Error: If condition must be a boolean, got FILE
-          write "This won't work";
-        }
-        `;
 }
+
+/*
 
 // Lexing & parsing
 const inputStream = CharStreams.fromString(code);
@@ -121,3 +78,4 @@ if (typeChecker.errors.length > 0) {
 }
 
 console.log('✅ Code is syntactically and semantically correct!');
+*/

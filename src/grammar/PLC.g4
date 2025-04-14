@@ -13,26 +13,26 @@ statement
     | ifStmt
     | whileStmt) ';'? ;
 
-// Deklarace proměnných musí být ukončena středníkem
-varDeclaration : TYPE ID (',' ID)* ';' ;
+// Deklarace proměnných může být ukončena středníkem
+varDeclaration : TYPE ID (',' ID)* ';'? ;
 
-// Výraz musí být ukončen středníkem
-expressionStmt : expression ';' ;
+// Výraz může být ukončen středníkem
+expressionStmt : expression ';'? ;
 
-// Čtení musí být ukončeno středníkem
-readStmt : 'read' ID (',' ID)* ';' ;
+// Čtení může být ukončeno středníkem
+readStmt : 'read' ID (',' ID)* ';'? ;
 
-// Zápis musí být ukončen středníkem
-writeStmt : 'write' (expression (',' expression)* )? ';' ;
+// Zápis může být ukončen středníkem
+writeStmt : 'write' (expression (',' expression)* )? ';'? ;
 
 // Blok může obsahovat více příkazů
 block : '{' statement* '}' ;
 
 // Podmínka může mít volitelnou větev `else`
-ifStmt : 'if' '(' expression ')' statement ('else' statement)? ;
+ifStmt : 'if' '(' expression ')' statement ('else' statement)? ';'? ;
 
-// Cyklus `while` musí obsahovat podmínku a tělo
-whileStmt : 'while' '(' expression ')' statement;
+// Cyklus `while` může obsahovat podmínku a tělo
+whileStmt : 'while' '(' expression ')' statement ';'? ;
 
 // Výrazy
 expression

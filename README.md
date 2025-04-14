@@ -95,3 +95,4 @@ src/
 - Assignments with type checking
 - Basic expressions with type inference
 - Errors on undeclared variables or mismatched types
+---
