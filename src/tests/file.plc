@@ -1,0 +1,9 @@
+fopen "test.txt"
+save a
+load s
+push I 1
+push I 1
+push I 2
+add I
+push S "a"
+fprint 4

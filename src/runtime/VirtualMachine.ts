@@ -20,6 +20,15 @@ interface Variable {
 }
 
 /**
+ * File handler for the VM (simulation)
+ */
+interface FileHandle {
+    name: string;
+    content: string[];
+    position: number;
+}
+
+/**
  * Virtual Machine for executing PLC instructions
  */
 export class VirtualMachine {
@@ -30,6 +39,7 @@ export class VirtualMachine {
     private labels: Map<string, number> = new Map();
     private running: boolean = false;
     private inputQueue: string[] = []; // For input simulation
+    private files: Map<string, FileHandle> = new Map(); // For file handling simulation
 
     constructor(instructions: string[]) {
         this.instructions = instructions;
@@ -55,6 +65,7 @@ export class VirtualMachine {
         this.variables.clear();
         this.programCounter = 0;
         this.inputQueue = [];
+        this.files.clear();
         this.running = false;
     }
 
@@ -100,35 +111,97 @@ export class VirtualMachine {
                 break;
             }
             case "pop": this.stack.pop(); break;
-            case "add": binOp((a, b) => a + b, tokens[1] as ValueType); break;
-            case "sub": binOp((a, b) => a - b, tokens[1] as ValueType); break;
-            case "mul": binOp((a, b) => a * b, tokens[1] as ValueType); break;
+            case "add": {
+                const type = tokens[1] as ValueType;
+                if (type !== 'I' && type !== 'F') throw new Error(`${instr}: invalid type ${type}`);
+                binOp((a, b) => a + b, type);
+                break;
+            }
+            case "sub": {
+                const type = tokens[1] as ValueType;
+                if (type !== 'I' && type !== 'F') throw new Error(`${instr}: invalid type ${type}`);
+                binOp((a, b) => a - b, type);
+                break;
+            }
+            case "mul": {
+                const type = tokens[1] as ValueType;
+                if (type !== 'I' && type !== 'F') throw new Error(`${instr}: invalid type ${type}`);
+                binOp((a, b) => a * b, type);
+                break;
+            }
             case "div": {
+                const type = tokens[1] as ValueType;
+                if (type !== 'I' && type !== 'F') throw new Error(`${instr}: invalid type ${type}`);
                 const b = this.stack.pop();
                 const a = this.stack.pop();
-                if (!a || !b || a.type !== tokens[1] || b.type !== tokens[1]) {
+                if (!a || !b || a.type !== type || b.type !== type) {
                     throw new Error(`${instr}: type mismatch`);
                 }
-                if (tokens[1] === 'I') {
+                if (type === 'I') {
                     this.stack.push({ type: 'I', value: Math.floor(Number(a.value) / Number(b.value)) });
                 } else {
-                    this.stack.push({ type: tokens[1], value: Number(a.value) / Number(b.value) });
+                    this.stack.push({ type: type, value: Number(a.value) / Number(b.value) });
                 }
                 break;
             }
             case "mod": binOp((a, b) => a % b, 'I'); break;
-            case "uminus": unaryOp(a => -a, tokens[1] as ValueType); break;
+            case "uminus": {
+                const type = tokens[1] as ValueType;
+                if (type !== 'I' && type !== 'F') throw new Error(`${instr}: invalid type ${type}`);
+                unaryOp(a => -a, type);
+                break;
+            }
             case "concat": binOp((a, b) => a + b, 'S'); break;
             case "and": binOp((a, b) => a && b, 'B'); break;
             case "or": binOp((a, b) => a || b, 'B'); break;
-            case "gt": binOp((a, b) => a > b, tokens[1] as ValueType); break;
-            case "lt": binOp((a, b) => a < b, tokens[1] as ValueType); break;
-            case "eq": binOp((a, b) => a === b, tokens[1] as ValueType); break;
+            case "gt": {
+                const type = tokens[1] as ValueType;
+                if (type !== 'I' && type !== 'F') throw new Error(`${instr}: invalid type ${type}`);
+                const b = this.stack.pop();
+                const a = this.stack.pop();
+                if (!a || !b || a.type !== type || b.type !== type) {
+                    throw new Error(`${instr}: type mismatch`);
+                }
+                this.stack.push({ type: 'B', value: a.value > b.value });
+                break;
+            }
+            case "lt": {
+                const type = tokens[1] as ValueType;
+                if (type !== 'I' && type !== 'F') throw new Error(`${instr}: invalid type ${type}`);
+                const b = this.stack.pop();
+                const a = this.stack.pop();
+                if (!a || !b || a.type !== type || b.type !== type) {
+                    throw new Error(`${instr}: type mismatch`);
+                }
+                this.stack.push({ type: 'B', value: a.value < b.value });
+                break;
+            }
+            case "eq": {
+                const type = tokens[1] as ValueType;
+                if (type !== 'I' && type !== 'F' && type !== 'S') throw new Error(`${instr}: invalid type ${type}`);
+                const b = this.stack.pop();
+                const a = this.stack.pop();
+                if (!a || !b || a.type !== type || b.type !== type) {
+                    throw new Error(`${instr}: type mismatch`);
+                }
+                this.stack.push({ type: 'B', value: a.value === b.value });
+                break;
+            }
+            case "neq": {
+                const type = tokens[1] as ValueType;
+                if (type !== 'I' && type !== 'F' && type !== 'S') throw new Error(`${instr}: invalid type ${type}`);
+                const b = this.stack.pop();
+                const a = this.stack.pop();
+                if (!a || !b || a.type !== type || b.type !== type) {
+                    throw new Error(`${instr}: type mismatch`);
+                }
+                this.stack.push({ type: 'B', value: a.value !== b.value });
+                break;
+            }
             case "not": {
                 const a = this.stack.pop();
                 if (!a || a.type !== 'B') {
-                    console.warn(`Warning: 'not' instruction expects a boolean ('B'), but got '${a?.type || 'undefined'}'. Skipping operation.`);
-                    break;
+                    throw new Error(`not: type mismatch - expected 'B', got '${a?.type || 'undefined'}'`);
                 }
                 this.stack.push({ type: 'B', value: !a.value });
                 break;
@@ -198,6 +271,95 @@ export class VirtualMachine {
                     throw new Error(`itof: type mismatch - expected 'I', got '${a?.type || 'undefined'}'`);
                 }
                 this.stack.push({ type: 'F', value: parseFloat(a.value.toString()) });
+                break;
+            }
+            // New file handling instructions
+            case "fopen": {
+                const filename = this.stack.pop();
+                if (!filename || filename.type !== 'S') {
+                    throw new Error(`fopen: expected string filename on stack`);
+                }
+
+                // Simulate file opening - create a new file handle
+                if (!this.files.has(filename.value as string)) {
+                    this.files.set(filename.value as string, {
+                        name: filename.value as string,
+                        content: [],
+                        position: 0
+                    });
+                }
+
+                // Push file handle reference (the filename) to the stack
+                this.stack.push({ type: 'S', value: filename.value });
+                break;
+            }
+            case "fwrite": {
+                // Expected stack: [filehandle, ...values to write]
+                // Parse number of values to write
+                const count = parseInt(tokens[1]);
+                if (isNaN(count) || count < 1) {
+                    throw new Error(`fwrite: invalid count ${tokens[1]}`);
+                }
+
+                // Get values to write in reverse order (they're on the stack)
+                const writeValues = [];
+                for (let i = 0; i < count; i++) {
+                    const val = this.stack.pop();
+                    if (!val) throw new Error(`fwrite: not enough values on stack`);
+                    writeValues.unshift(val);
+                }
+
+                // Get file handle
+                const fileHandle = this.stack.pop();
+                if (!fileHandle || fileHandle.type !== 'S') {
+                    throw new Error(`fwrite: expected file handle on stack`);
+                }
+
+                // Find the file
+                const file = this.files.get(fileHandle.value as string);
+                if (!file) {
+                    throw new Error(`fwrite: file not found ${fileHandle.value}`);
+                }
+
+                // Write values to file
+                for (const val of writeValues) {
+                    file.content[file.position] = String(val.value);
+                    file.position++;
+                }
+                break;
+            }
+            case "fprint": {
+                // Parse number of values to print
+                const count = parseInt(tokens[1]);
+                if (isNaN(count) || count < 1) {
+                    throw new Error(`fprint: invalid count ${tokens[1]}`);
+                }
+
+                // Get values to print
+                const printValues = this.stack.splice(-count);
+
+                // Get file handle (should be the item before values)
+                const fileHandle = this.stack.pop();
+                if (!fileHandle || fileHandle.type !== 'S') {
+                    throw new Error(`fprint: expected file handle on stack`);
+                }
+
+                // Find the file
+                const file = this.files.get(fileHandle.value as string);
+                if (!file) {
+                    throw new Error(`fprint: file not found ${fileHandle.value}`);
+                }
+
+                // Print values to file (for simulation, just add to content array)
+                for (const val of printValues) {
+                    file.content.push(String(val.value));
+                }
+
+                console.log(`[File ${file.name}] Printed: ${printValues.map(v => v.value).join(' ')}`);
+                break;
+            }
+            case "halt": {
+                this.running = false;
                 break;
             }
             default:

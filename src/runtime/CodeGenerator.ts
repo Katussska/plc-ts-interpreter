@@ -57,6 +57,8 @@ export class CodeGenerator
             return this.visit(ctx.ifStmt()!);
         } else if (ctx.whileStmt()) {
             return this.visit(ctx.whileStmt()!);
+        } else if (ctx.fileStmt()) {
+            return this.visit(ctx.fileStmt()!);
         }
         return '';
     }
@@ -183,6 +185,49 @@ export class CodeGenerator
         // Open the file
         this.emit('fopen');
 
+        return '';
+    }
+
+    visitFileWrite(ctx: PLCParser.FileWriteContext): string {
+        // Generate code for all values to write
+        for (let i = 1; i < ctx.expression().length; i++) {
+            this.visit(ctx.expression(i));
+        }
+
+        // Push the file handle onto the stack last
+        this.visit(ctx.expression(0));
+
+        // Issue fwrite instruction with count of values to write
+        const writeCount = ctx.expression().length - 1;
+        this.emit(`fwrite ${writeCount}`);
+
+        return '';
+    }
+
+    visitFilePrint(ctx: PLCParser.FilePrintContext): string {
+        // Generate code for all values to print
+        for (let i = 1; i < ctx.expression().length; i++) {
+            this.visit(ctx.expression(i));
+        }
+
+        // Push the file handle onto the stack last
+        this.visit(ctx.expression(0));
+
+        // Issue fprint instruction with count of values to print
+        const printCount = ctx.expression().length - 1;
+        this.emit(`fprint ${printCount}`);
+
+        return '';
+    }
+
+    visitFileStmt(ctx: PLCParser.FileStmtContext): string {
+        if (ctx.fileOpen()) {
+            return this.visit(ctx.fileOpen()!);
+        } else if (ctx.fileWrite()) {
+            return this.visit(ctx.fileWrite()!);
+        } else if (ctx.filePrint()) {
+            return this.visit(ctx.filePrint()!);
+        }
         return '';
     }
 

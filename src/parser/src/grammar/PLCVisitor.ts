@@ -17,7 +17,6 @@ import { ParensContext } from "./PLCParser";
 import { LiteralExprContext } from "./PLCParser";
 import { VarExprContext } from "./PLCParser";
 import { MultiAssignmentContext } from "./PLCParser";
-import { FileOpenContext } from "./PLCParser";
 import { IntLiteralContext } from "./PLCParser";
 import { FloatLiteralContext } from "./PLCParser";
 import { BoolLiteralContext } from "./PLCParser";
@@ -28,6 +27,10 @@ import { VarDeclarationContext } from "./PLCParser";
 import { ExpressionStmtContext } from "./PLCParser";
 import { ReadStmtContext } from "./PLCParser";
 import { WriteStmtContext } from "./PLCParser";
+import { FileStmtContext } from "./PLCParser";
+import { FileOpenContext } from "./PLCParser";
+import { FileWriteContext } from "./PLCParser";
+import { FilePrintContext } from "./PLCParser";
 import { BlockContext } from "./PLCParser";
 import { IfStmtContext } from "./PLCParser";
 import { WhileStmtContext } from "./PLCParser";
@@ -156,14 +159,6 @@ export interface PLCVisitor<Result> extends ParseTreeVisitor<Result> {
 	visitMultiAssignment?: (ctx: MultiAssignmentContext) => Result;
 
 	/**
-	 * Visit a parse tree produced by the `fileOpen`
-	 * labeled alternative in `PLCParser.expression`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitFileOpen?: (ctx: FileOpenContext) => Result;
-
-	/**
 	 * Visit a parse tree produced by the `intLiteral`
 	 * labeled alternative in `PLCParser.literal`.
 	 * @param ctx the parse tree
@@ -236,6 +231,34 @@ export interface PLCVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitWriteStmt?: (ctx: WriteStmtContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `PLCParser.fileStmt`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitFileStmt?: (ctx: FileStmtContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `PLCParser.fileOpen`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitFileOpen?: (ctx: FileOpenContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `PLCParser.fileWrite`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitFileWrite?: (ctx: FileWriteContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `PLCParser.filePrint`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitFilePrint?: (ctx: FilePrintContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `PLCParser.block`.

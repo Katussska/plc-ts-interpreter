@@ -17,7 +17,6 @@ import { ParensContext } from "./PLCParser";
 import { LiteralExprContext } from "./PLCParser";
 import { VarExprContext } from "./PLCParser";
 import { MultiAssignmentContext } from "./PLCParser";
-import { FileOpenContext } from "./PLCParser";
 import { IntLiteralContext } from "./PLCParser";
 import { FloatLiteralContext } from "./PLCParser";
 import { BoolLiteralContext } from "./PLCParser";
@@ -28,6 +27,10 @@ import { VarDeclarationContext } from "./PLCParser";
 import { ExpressionStmtContext } from "./PLCParser";
 import { ReadStmtContext } from "./PLCParser";
 import { WriteStmtContext } from "./PLCParser";
+import { FileStmtContext } from "./PLCParser";
+import { FileOpenContext } from "./PLCParser";
+import { FileWriteContext } from "./PLCParser";
+import { FilePrintContext } from "./PLCParser";
 import { BlockContext } from "./PLCParser";
 import { IfStmtContext } from "./PLCParser";
 import { WhileStmtContext } from "./PLCParser";
@@ -223,19 +226,6 @@ export interface PLCListener extends ParseTreeListener {
 	exitMultiAssignment?: (ctx: MultiAssignmentContext) => void;
 
 	/**
-	 * Enter a parse tree produced by the `fileOpen`
-	 * labeled alternative in `PLCParser.expression`.
-	 * @param ctx the parse tree
-	 */
-	enterFileOpen?: (ctx: FileOpenContext) => void;
-	/**
-	 * Exit a parse tree produced by the `fileOpen`
-	 * labeled alternative in `PLCParser.expression`.
-	 * @param ctx the parse tree
-	 */
-	exitFileOpen?: (ctx: FileOpenContext) => void;
-
-	/**
 	 * Enter a parse tree produced by the `intLiteral`
 	 * labeled alternative in `PLCParser.literal`.
 	 * @param ctx the parse tree
@@ -352,6 +342,50 @@ export interface PLCListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitWriteStmt?: (ctx: WriteStmtContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `PLCParser.fileStmt`.
+	 * @param ctx the parse tree
+	 */
+	enterFileStmt?: (ctx: FileStmtContext) => void;
+	/**
+	 * Exit a parse tree produced by `PLCParser.fileStmt`.
+	 * @param ctx the parse tree
+	 */
+	exitFileStmt?: (ctx: FileStmtContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `PLCParser.fileOpen`.
+	 * @param ctx the parse tree
+	 */
+	enterFileOpen?: (ctx: FileOpenContext) => void;
+	/**
+	 * Exit a parse tree produced by `PLCParser.fileOpen`.
+	 * @param ctx the parse tree
+	 */
+	exitFileOpen?: (ctx: FileOpenContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `PLCParser.fileWrite`.
+	 * @param ctx the parse tree
+	 */
+	enterFileWrite?: (ctx: FileWriteContext) => void;
+	/**
+	 * Exit a parse tree produced by `PLCParser.fileWrite`.
+	 * @param ctx the parse tree
+	 */
+	exitFileWrite?: (ctx: FileWriteContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `PLCParser.filePrint`.
+	 * @param ctx the parse tree
+	 */
+	enterFilePrint?: (ctx: FilePrintContext) => void;
+	/**
+	 * Exit a parse tree produced by `PLCParser.filePrint`.
+	 * @param ctx the parse tree
+	 */
+	exitFilePrint?: (ctx: FilePrintContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `PLCParser.block`.

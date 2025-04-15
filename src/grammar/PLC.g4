@@ -9,6 +9,7 @@ statement
     | expressionStmt
     | readStmt
     | writeStmt
+    | fileStmt
     | block
     | ifStmt
     | whileStmt) ';'? ;
@@ -24,6 +25,15 @@ readStmt : 'read' ID (',' ID)* ';'? ;
 
 // Zápis může být ukončen středníkem
 writeStmt : 'write' (expression (',' expression)* )? ';'? ;
+
+// File operations
+fileStmt : fileOpen | fileWrite | filePrint ;
+
+fileOpen : 'fopen' expression ';'? ;
+
+fileWrite : 'fwrite' expression ',' expression (',' expression)* ';'? ;
+
+filePrint : 'fprint' expression ',' expression (',' expression)* ';'? ;
 
 // Blok může obsahovat více příkazů
 block : '{' statement* '}' ;
@@ -50,7 +60,6 @@ expression
     | literal                                    # literalExpr
     | ID                                         # varExpr
     | ID '=' expression (',' ID '=' expression)* # multiAssignment
-    | 'fopen' expression                         # fileOpen
     ;
 
 // Literály
